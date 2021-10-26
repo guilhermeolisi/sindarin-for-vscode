@@ -1,0 +1,124 @@
+{
+	"name": "sindarin-for-vscode",
+	"publisher": "goSiqueira",
+	"author": "Guilherme Oliveira Siqueira",
+	"displayName": "Sindarin for Visual Studio Code",
+	"icon": "resources/Sindarin128pxColor.png",
+	"license": "MIT",
+	"description": "Extension for Sindarin, a program for crystal diffraction calculations",
+	"homepage": "https://github.com/Microsoft/vscode-python",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Microsoft/vscode-python"
+    },
+    "version": "0.1.0",
+	"engines": {
+		"vscode": "^1.61.0"
+	},
+	"keywords": [
+		"sindarin",
+		"x-ray",
+		"diffraction",
+		"crystal",
+		"crystallography"
+	],
+	"categories": [
+		"Other",
+		"Programming Languages",
+		"Extension Packs"
+	],
+	"activationEvents": [
+		"onLanguage:sindarin"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"keybindings": [
+			{
+				"command": "sindarin-for-vscode.interpret",
+				"key": "ctrl+alt+down",
+				"when": "editorLangId == sindarin"
+			},
+			{
+				"command": "sindarin-for-vscode.walk",
+				"key": "ctrl+alt+right",
+				"when": "editorLangId == sindarin"
+			}
+		],
+		"commands": [
+			{
+				"command": "sindarin-for-vscode.interpret",
+				"title": "Interpret",
+				"category": "Sindarin",
+				"icon": "resources/commandInterpret16pxmono.png",
+				"when": "editorLangId == sindarin"
+			},
+			{
+				"command": "sindarin-for-vscode.walk",
+				"title": "Walk",
+				"category": "Sindarin",
+				"icon": "resources/commandWalk16pxmono.png",
+				"when": "editorLangId == sindarin"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "sindarin-for-vscode.interpret",
+					"alt": "markdown.showPreviewToSide",
+					"group": "navigation",
+					"when": "editorLangId == sindarin"
+				},
+				{
+					"command": "sindarin-for-vscode.walk",
+					"alt": "markdown.showPreviewToSide",
+					"group": "navigation",
+					"when": "editorLangId == sindarin"
+				}
+			]
+		},
+		"languages": [
+			{
+				"id": "sindarin",
+				"extensions": [
+					".sin"
+				],
+				"aliases": [
+					"Sindarin",
+					"sin"
+				],
+				"configuration": "./syntaxe/language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "sindarin",
+				"path": "./syntaxe/sindarin.tmLanguage.json",
+				"scopeName": "source.sin"
+			}
+		]
+	},
+	"extensionPack": [
+		"RandomFractalsInc.vscode-chartjs"
+	],
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.61.0",
+		"@types/glob": "^7.1.4",
+		"@types/mocha": "^9.0.0",
+		"@types/node": "14.x",
+		"@typescript-eslint/eslint-plugin": "^4.31.1",
+		"@typescript-eslint/parser": "^4.31.1",
+		"eslint": "^7.32.0",
+		"glob": "^7.1.7",
+		"mocha": "^9.1.1",
+		"typescript": "^4.4.3",
+		"@vscode/test-electron": "^1.6.2"
+	}
+}

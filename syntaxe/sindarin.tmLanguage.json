@@ -1,0 +1,46 @@
+{
+    "scopeName": "source.sin",
+    "patterns": [
+        {
+            "name": "keyword.control.sin",
+            "match": "(?:\\b)(if|while|for|return)(?:\\b)"
+        },
+        {
+            "name": "string.quoted.double.sin",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.sin",
+                    "match": "\\."
+                }
+            ]
+        },
+        {
+            "name":"comment.line.double-slash.sin",
+            "begin": "//",
+            "end":"(?:$)"
+        },
+        {
+            "name": "constant.language.sin",
+            "match": "(?:\\b)(true|false)(?:\\b)"
+        },
+        {
+            "name": "support.class.sin",
+            "match": "(?i)^(?:\\s*)(computer|convolution|experimental|simulation|data|datasimulation|radiation|polynomial|phase|cell|VoigtianSize)(?:\\b)"
+        },
+        {
+            "name": "variable.parameter.sin",
+            "match": "(?i)^(?:\\s*)(ProfilexMax|CutOff|IncidentAngle|Scale)(?:\\b)"
+        },
+        {
+            "name": "keyword.other.sin",
+            "match": "@(\\+|\\-)?(\\d+)(\\.\\d+)?((E|e)(\\+|\\-)?\\d+)?"
+        },
+        {
+            "name":"comment.block.documentation.sin",
+            "begin": "{",
+            "end":"}"
+        }
+    ]
+}
