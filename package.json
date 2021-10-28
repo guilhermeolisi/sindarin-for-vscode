@@ -10,7 +10,7 @@
 		"type": "git",
 		"url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
 	},
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"engines": {
 		"vscode": "^1.61.0"
 	},
@@ -102,7 +102,6 @@
 				],
 				"configuration": "./syntaxe/language-configuration.json"
 			}
-			
 		],
 		"grammars": [
 			{
