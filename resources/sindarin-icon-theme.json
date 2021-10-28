@@ -1,0 +1,18 @@
+{
+  //https://stackoverflow.com/questions/44598888/adding-a-language-specific-icon-in-vscode
+    "iconDefinitions": {
+        "sindarinLanguage": {
+          "iconPath": "./Sindarin128pxColor.png"
+        }
+      },
+      "languageIds": {"sindarin": "sindarinLanguage"}
+
+      ,
+		"iconThemes": [
+			{
+				"id": "sindarin",
+				"label": "Sindarin",
+				"path": "./resources/sindarin-icon-theme.json"
+			}
+		]
+}

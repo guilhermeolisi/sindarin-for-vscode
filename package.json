@@ -6,12 +6,11 @@
 	"icon": "resources/Sindarin128pxColor.png",
 	"license": "MIT",
 	"description": "Extension for Sindarin, a program for crystal diffraction calculations",
-	"homepage": "https://github.com/Microsoft/vscode-python",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Microsoft/vscode-python"
-    },
-    "version": "0.1.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
+	},
+	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.61.0"
 	},
@@ -28,20 +27,24 @@
 		"Extension Packs"
 	],
 	"activationEvents": [
-		"onLanguage:sindarin"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"keybindings": [
 			{
 				"command": "sindarin-for-vscode.interpret",
-				"key": "ctrl+alt+down",
+				"key": "ctrl+shift+down",
 				"when": "editorLangId == sindarin"
 			},
 			{
 				"command": "sindarin-for-vscode.walk",
-				"key": "ctrl+alt+right",
+				"key": "ctrl+shift+right",
 				"when": "editorLangId == sindarin"
+			},
+			{
+				"command": "sindarin-for-vscode.update",
+				"key": "ctrl+shift+u"
 			}
 		],
 		"commands": [
@@ -58,6 +61,12 @@
 				"category": "Sindarin",
 				"icon": "resources/commandWalk16pxmono.png",
 				"when": "editorLangId == sindarin"
+			},
+			{
+				"command": "sindarin-for-vscode.update",
+				"title": "Update",
+				"category": "Sindarin",
+				"icon": "resources/commandUpdate16pxmono.png"
 			}
 		],
 		"menus": {
@@ -73,6 +82,11 @@
 					"alt": "markdown.showPreviewToSide",
 					"group": "navigation",
 					"when": "editorLangId == sindarin"
+				},
+				{
+					"command": "sindarin-for-vscode.update",
+					"alt": "markdown.showPreviewToSide",
+					"group": "navigation"
 				}
 			]
 		},
@@ -88,6 +102,7 @@
 				],
 				"configuration": "./syntaxe/language-configuration.json"
 			}
+			
 		],
 		"grammars": [
 			{
