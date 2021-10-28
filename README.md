@@ -40,9 +40,15 @@ Also, the [Chart.js Preview](https://github.com/chartjs/Chart.js) extension is i
 It is necessary to download the Sindarin program from the website:.
 the program needs to be in the default folder on your computer:
 * Windows: c:\Sindarin
-* Linux and macOS: ~/Sindarin
+* Linux and macOS: \Sindarin
 
 If you want other folder, you need to include the path of this folder in the PATH environment variable in your operating system to allow the extension to find the Sindarin program. 
 
+## Download Sindarin library
+
+Sindarin for:
+* [Windows](https://sindarin.s3.sa-east-1.amazonaws.com/installerwindows.zip)
+* [Linux](https://sindarin.s3.sa-east-1.amazonaws.com/installerlinux.zip)
+* [macOS](https://sindarin.s3.sa-east-1.amazonaws.com/installermacos.zip)
 
 **Good Work!**
