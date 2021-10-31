@@ -21,8 +21,9 @@ The extension enables Sindarin code highlighting. Sindarin "language" is automat
 ![Sindarin Language in language mode selector](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinStatusBarLanguage.png?raw=true)
 
 2 commands are enable:
-* Interpet: run sindarin to interpret for the current sindarin file (Shortcut: Ctrl+Alt+Down Arrow)
-* Walk: run sindarin to interpret and run optimization routine for the current sindarin file (Shortcut: Ctrl+Alt+Right Arrow)
+* Interpet: run sindarin to interpret for the current sindarin file (Shortcut: Ctrl+Shift+Down Arrow)
+* Walk: run sindarin to interpret and run optimization routine for the current sindarin file (Shortcut: Ctrl+Shift+Right Arrow)
+* Update: run sindarin to update program form online repositorie, need internet connection (Shortcut: Ctrl+Shift+U)
 
 These commands can be acessed by Command Pallete, short cut or two dedicated icons in editor title. 
 ![Sindarin commands in Command Pallete](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinCommands.png?raw=true)
@@ -40,15 +41,19 @@ Also, the [Chart.js Preview](https://github.com/chartjs/Chart.js) extension is i
 It is necessary to download the Sindarin program from the website:.
 the program needs to be in the default folder on your computer:
 * Windows: c:\Sindarin
-* Linux and macOS: \Sindarin
+* Linux: ~/Sindarin
+* macOS: /Sindarin
 
 If you want other folder, you need to include the path of this folder in the PATH environment variable in your operating system to allow the extension to find the Sindarin program. 
 
-## Download Sindarin library
+### Download Sindarin
 
-Sindarin for:
-* [Windows](https://sindarin.s3.sa-east-1.amazonaws.com/installerwindows.zip)
-* [Linux](https://sindarin.s3.sa-east-1.amazonaws.com/installerlinux.zip)
-* [macOS](https://sindarin.s3.sa-east-1.amazonaws.com/installermacos.zip)
+Download the compacted file for:
+* [Windows 64x](https://sindarin.s3.sa-east-1.amazonaws.com/windows64.zip)
+* [Windows 86x](https://sindarin.s3.sa-east-1.amazonaws.com/windows86.zip)
+* [Linux 64x](https://sindarin.s3.sa-east-1.amazonaws.com/linux64.tar.gz)
+* [macOS 64x](https://sindarin.s3.sa-east-1.amazonaws.com/macos64.7z)
+
+Unzip the downloaded file to standard folder:
 
 **Good Work!**

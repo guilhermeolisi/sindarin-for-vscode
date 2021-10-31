@@ -14,14 +14,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	console.log('Congratulations, your extension "sindarin-for-vscode" is now active!');
 
-	vscode.languages.registerHoverProvider(
-		{ pattern: '**.sin' },
-		{
-			provideHover(doc: vscode.TextDocument) {
-				return new vscode.Hover('For Sindarin documents');
-			}
-		}
-	);
+	// vscode.languages.registerHoverProvider(
+	// 	{ pattern: '**.sin' },
+	// 	{
+	// 		provideHover(doc: vscode.TextDocument) {
+	// 			return new vscode.Hover('For Sindarin documents');
+	// 		}
+	// 	}
+	// );
 
 	getOutputChannel().appendLine("Start Sindarin extension");
 	await VerifyOS();
@@ -186,6 +186,7 @@ async function VerifyOS(): Promise<void> {
 
 	//Verifica o executável Sindarin
 	let downloadInstall = 'Download';
+	let goToWebsite = "Go to website";
 
 	try {
 		hasSinEnv = await execShellBool("Sindarin", options);
@@ -215,10 +216,17 @@ async function VerifyOS(): Promise<void> {
 				pathSin = "~/Sindarin";
 			}
 			else {
-				vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', downloadInstall)
+				// vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', downloadInstall)
+				// 	.then(async selection => {
+				// 		if (selection === downloadInstall) {
+				// 			await InstallSindarin();
+				// 		}
+				// 	});
+					vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', goToWebsite)
 					.then(async selection => {
-						if (selection === downloadInstall) {
-							await InstallSindarin();
+						if (selection === goToWebsite) {
+							vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+							return;
 						}
 					});
 			}
@@ -251,12 +259,20 @@ async function VerifyOS(): Promise<void> {
 					pathSin = "C:\\Sindarin";
 				}
 				else {
-					vscode.window.showInformationMessage('Sindarin program is not found in default folder: c:\\Sindarin', downloadInstall)
-						.then(async selection => {
-							if (selection === downloadInstall) {
-								await InstallSindarin();
-							}
-						});
+					// vscode.window.showInformationMessage('Sindarin program is not found in default folder: c:\\Sindarin', downloadInstall)
+					// 	.then(async selection => {
+					// 		if (selection === downloadInstall) {
+					// 			await InstallSindarin();
+					// 		}
+					// 	});
+					vscode.window.showInformationMessage('Sindarin program is not found in default folder: c:\\Sindarin', goToWebsite)
+					.then(async selection => {
+						if (selection === goToWebsite) {
+							vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+							return;
+						}
+					});
+
 				}
 			}
 			//Verifica se é macOS
@@ -295,22 +311,35 @@ async function InstallSindarin(): Promise<void> {
 	var commandDownload;
 	var commandUnzip;
 	var commandSinFolder;
+	var argsFolder;
 	var cpDownload;
 	var cpUnzip;
-	var args: string[] = [""];
+	var argsDonwload: string[] = [""];
 	var argsZip: string[] = [""];
 	if (OSIndex === 0) {
+		//Invoke-WebRequest -Uri https://sindarin.s3.sa-east-1.amazonaws.com/windows64.zip -OutFile C:\\sindarin.zip
+		//https://www.ryandrane.com/2015/06/run-script-or-command-as-admin-in-powershell/
+		//Start-Process powershell.exe -Verb RunAs -ArgumentList "Invoke-WebRequest -Uri https://sindarin.s3.sa-east-1.amazonaws.com/windows64.zip -OutFile C:\\sindarin.zip"
 		uri = uri + "/windows64.zip";
-		fileZip = "C:\\sindarin.zip";
+		fileZip = "C:\\Sindarin\\sindarin.zip";
 		sindarinFolder = "C:\\Sindarin";
+
 		commandDownload = "Invoke-WebRequest";
+		argsDonwload = ["-Uri", uri, "-OutFile", fileZip];
+		// commandDownload = "Start-Process";
+		// argsDonwload = ["powershell.exe", "-Verb", "RunAs", "-ArgumentList", '\"Invoke-WebRequest -Uri '+uri + ' -OutFile ' + fileZip +'\"'];
+
 		commandUnzip = "Expand-Archive";
-		args = ["-Uri", uri, "-OutFile", fileZip];
-		argsZip = ["-LiteralPath", fileZip, "-DestinationPath", "C:\\"];
+		argsZip = ["-LiteralPath", fileZip, "-DestinationPath", sindarinFolder];
+		// commandUnzip = "Start-Process";
+		// argsZip = ["powershell.exe", "-Verb", "RunAs", "-ArgumentList", '\"Expand-Archive -LiteralPath '+fileZip + ' -DestinationPath ' + sindarinFolder +'\"'];
+
 		fileSindarin = "\\" + fileSindarin + ".exe";
 		fileUpdate = "\\" + fileUpdate + ".exe";
 
-		commandSinFolder = "";
+		//Start-Process powershell.exe -ArgumentList
+		commandSinFolder = "Start-Process";
+		argsFolder = ["powershell.exe", "-Verb", "RunAs", "-ArgumentList", '\"md ' + sindarinFolder + '\"'];
 	}
 	else if (OSIndex === 1) {
 		uri = uri + "/linux64.tar.gz";
@@ -319,7 +348,7 @@ async function InstallSindarin(): Promise<void> {
 		//commandDownload = "curl";
 		//args = ["-k", "-O", "-L", uri];
 		commandDownload = "wget";
-		args = ["--no-check-certificate", "--no-clobber", "-O", fileZip, uri];
+		argsDonwload = ["--no-check-certificate", "--no-clobber", "-O", fileZip, uri];
 
 		//commandUnzip = "gunzip";
 		//argsZip = [fileZip];
@@ -334,6 +363,7 @@ async function InstallSindarin(): Promise<void> {
 		cpUnzip = "gunzip " + fileZip;
 
 		commandSinFolder = "mkdir";
+		argsFolder = [sindarinFolder];
 	}
 	else if (OSIndex === 2) {
 		uri = uri + "/macos64.zip";
@@ -343,15 +373,21 @@ async function InstallSindarin(): Promise<void> {
 	else {
 		sindarinFolder = "";
 	}
-	if (!fileZip || !commandDownload || !commandUnzip || !cpDownload || !cpUnzip || !commandSinFolder)
+	if (!fileZip || !commandDownload || !commandUnzip || !commandSinFolder || !argsFolder)
 		return;
 
 
 	//const sindarinFolder = path.dirname(fileZip);
-	const options: vscode.ShellExecutionOptions = {
-		//cwd: sindarinFolder,
-
-	};
+	var options: vscode.ShellExecutionOptions;
+	if (OSIndex) {
+		options = {
+			//cwd: sindarinFolder,
+			cwd: "c:\\"
+		};
+	}
+	else {
+		options = {};
+	}
 	const definition: vscode.TaskDefinition = {
 		type: "shell"
 	};
@@ -359,6 +395,7 @@ async function InstallSindarin(): Promise<void> {
 
 	var haszip: boolean;
 	try {
+		//ls é para linux e powershell
 		haszip = await execShellBool("ls " + fileZip, options);
 	}
 	catch {
@@ -366,25 +403,19 @@ async function InstallSindarin(): Promise<void> {
 	}
 	//No such file or directory
 	const taskDownload = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin install`, definition.type,
-		new vscode.ShellExecution(commandDownload, args, options), [""]);
-	// if (!haszip) {
-	// 	//downloadSindarin(definition, commandDownload, args, options);
-	// 	const taskDownload = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin install`, definition.type,
-	// 		new vscode.ShellExecution(commandDownload, args, options), [""]);
-	// 	vscode.tasks.executeTask(taskDownload);
-	// }
+		new vscode.ShellExecution(commandDownload, argsDonwload, options), [""]);
+
 	var hasSinFolder;
 	var taskFolder: vscode.Task;
 	try {
-		hasSinFolder = await execShellBool("cd ~/" + fileSindarin, options);
+		hasSinFolder = await execShellBool("cd " + sindarinFolder, options);
 	}
 	catch {
 		hasSinFolder = false;
 	}
 	if (!hasSinFolder) {
-		const argsF = ["~" + fileSindarin];
 		taskFolder = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin install`, definition.type,
-			new vscode.ShellExecution(commandSinFolder, argsF, options), [""]);
+			new vscode.ShellExecution(commandSinFolder, argsFolder, options), [""]);
 		//vscode.tasks.executeTask(taskFolder);
 	}
 	else {
@@ -397,49 +428,59 @@ async function InstallSindarin(): Promise<void> {
 		new vscode.ShellExecution(commandUnzip, argsZip, options), [""]);
 	//vscode.tasks.executeTask(taskUnzip);
 
-	if (OSIndex === 1) {
-		//permitir a execução dos sindarin e sindarinupdate
+	var cont: boolean = false;
+	var size: string = "";
+	var size2: string = "";
 
-		var commandLinePower = "sudo";
-		args = ["chmod", "u+x", sindarinFolder + fileSindarin];
-		const task1 = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin install`, definition.type,
-			new vscode.ShellExecution(commandLinePower, args, options), [""]);
-
-
-		//vscode.tasks.executeTask(taskDownload).then(()=>vscode.tasks.executeTask(taskFolder)).then(() => vscode.tasks.executeTask(taskUnzip).then(() => vscode.tasks.executeTask(task1)));
-		//du -hs /path/to/directory
-		//https://askubuntu.com/questions/1224/how-do-i-determine-the-total-size-of-a-directory-folder-from-the-command-line
-		var cont: boolean = false;
-		var size: string = "";
-		var size2: string = "";
-		if (!hasSinFolder) {
-			vscode.tasks.executeTask(taskFolder);
+	if (!hasSinFolder) {
+		try {
+			await vscode.tasks.executeTask(taskFolder);
+			hasSinFolder = true;
 		}
-		if (!haszip) {
-			vscode.tasks.executeTask(taskDownload);
-			while (!cont) {
-				try {
-					size = await execShell("du -hs " + fileZip, options);
-					if (size === size2) {
-						cont = true;
-					}
-					else {
-						cont = false;
-						size2 = size;
-					}
-				}
-				catch {
-					cont = false;
-				}
-				if (!cont) {
-					await sleep(1000);
-				}
-			}
+		catch {
+			hasSinFolder = false;
 		}
-		vscode.tasks.executeTask(taskUnzip);
+		await sleep(500);
+	}
+	if (!haszip) {
+		// if (OSIndex === 0) {
+		// 	//Set-ExecutionPolicy "Unrestricted"
+		// 	try {
+		// 		const temp = await execShell("Set-ExecutionPolicy \"Unrestricted\"", options);
+		// 		const temp2 = temp;
+		// 		if (temp2) {
+
+		// 		}
+		// 	}
+		// 	catch {
+
+		// 	}
+		// }
+		var count = 0;
+		try {
+			await vscode.tasks.executeTask(taskDownload);
+		}
+		catch {
+			cont = false;
+		}
 		while (!cont) {
 			try {
-				size = await execShell("du -hs " + sindarinFolder, options);
+				if (OSIndex === 0) {
+					try {
+						//size = await execShell("Write-Host((Get-Item " + fileZip + ").length/1KB)", options);	//Write-Host((Get-Item UBT_Uninstalllog.txt).length/1KB)
+						size = await execShell("Start-Process powershell.exe -ArgumentList \"Write-Host((Get-Item " + fileZip + ").length/1KB)\"", options);
+					}
+					catch {
+						size = count.toString();
+						count = count + 1;
+						if (count === 20) {
+							return;
+						}
+					}
+				}
+				if (OSIndex === 1) {
+					size = await execShell("du -hs " + fileZip, options);
+				}
 				if (size === size2) {
 					cont = true;
 				}
@@ -455,6 +496,46 @@ async function InstallSindarin(): Promise<void> {
 				await sleep(1000);
 			}
 		}
+	}
+	vscode.tasks.executeTask(taskUnzip);
+	while (!cont) {
+		try {
+			if (OSIndex === 0) {
+				//(Get-ChildItem C:\PowderCell -Recurse | Measure-Object -Property Length -Sum).Sum
+				size = await execShell("Get-ChildItem " + sindarinFolder + " -Recurse | Measure-Object -Property Length -Sum).Sum", options);
+			}
+			else if (OSIndex === 1) {
+				size = await execShell("du -hs " + sindarinFolder, options);
+			}
+			if (size === size2) {
+				cont = true;
+			}
+			else {
+				cont = false;
+				size2 = size;
+			}
+		}
+		catch {
+			cont = false;
+		}
+		if (!cont) {
+			await sleep(1000);
+		}
+	}
+
+	if (OSIndex === 1) {
+		//permitir a execução dos sindarin e sindarinupdate
+
+		var commandLinePower = "sudo";
+		const args = ["chmod", "u+x", sindarinFolder + fileSindarin];
+		const task1 = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin install`, definition.type,
+			new vscode.ShellExecution(commandLinePower, args, options), [""]);
+
+
+		//vscode.tasks.executeTask(taskDownload).then(()=>vscode.tasks.executeTask(taskFolder)).then(() => vscode.tasks.executeTask(taskUnzip).then(() => vscode.tasks.executeTask(task1)));
+		//du -hs /path/to/directory
+		//https://askubuntu.com/questions/1224/how-do-i-determine-the-total-size-of-a-directory-folder-from-the-command-line
+
 		vscode.tasks.executeTask(task1);
 
 		// if (hasSinFolder) {
