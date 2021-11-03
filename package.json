@@ -27,7 +27,10 @@
     "Extension Packs"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:sindarin",
+    "onCommand:sindarin-for-vscode.interpret",
+    "onCommand:sindarin-for-vscode.walk",
+    "onCommand:sindarin-for-vscode.update"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -86,7 +89,8 @@
         {
           "command": "sindarin-for-vscode.update",
           "alt": "markdown.showPreviewToSide",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "editorLangId == sindarin"
         }
       ]
     },
