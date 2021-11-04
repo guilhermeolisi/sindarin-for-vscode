@@ -244,17 +244,27 @@ async function VerifyOS(): Promise<void> {
 		else {
 			//Verifica se é Windows
 			try {
-				const definition: vscode.TaskDefinition = {
-					type: "shell",
-				};
-				const taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, "TestTask", definition.type,
-					new vscode.ShellExecution('Get-WmiObject', ["-class", "Win32_OperatingSystem"], options), [""]);
-				taskTemp.presentationOptions.reveal = vscode.TaskRevealKind.Never;
-				vscode.tasks.executeTask(taskTemp);
-				testOS2 = true;
+				// const definition: vscode.TaskDefinition = {
+				// 	type: "shell",
+				// };
+				// const taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, "TestTask", definition.type,
+				// 	new vscode.ShellExecution('Get-WmiObject', ["-class", "Win32_OperatingSystem"], options), [""]);
+				// taskTemp.presentationOptions.reveal = vscode.TaskRevealKind.Never;
+				// vscode.tasks.executeTask(taskTemp);
+				// testOS2 = true;
+				
+				testOS2 = await execShellBool('powershell Get-CimInstance Win32_OperatingSystem', options);
 			}
 			catch {
 				testOS2 = false;
+			}
+			if (!testOS2){
+				try {
+					testOS2 = await execShellBool('cmd Get-CimInstance Win32_OperatingSystem', options);
+				}
+				catch {
+					testOS2 = false;
+				}
 			}
 			if (testOS2) {
 				OSIndex = 0;
