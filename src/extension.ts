@@ -140,7 +140,7 @@ async function InterpreterCommand(mode: string): Promise<void> {
 		}
 		else {
 			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
-				new vscode.ShellExecution("dotnet", [commandLinePower + "dll", fileName, "--" + mode, "--all", "--code"], options), [""]);
+				new vscode.ShellExecution("dotnet", [commandLinePower + ".dll", fileName, "--" + mode, "--all", "--code"], options), [""]);
 		}
 	}
 	else {
