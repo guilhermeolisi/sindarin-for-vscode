@@ -65,10 +65,10 @@ async function InterpreterCommand(mode: string): Promise<void> {
 				vscode.window.showInformationMessage('Sindarin program is not found in default folder: C:\\Sindarin');
 			}
 			else if (OSIndex === 1) {
-				vscode.window.showInformationMessage('Sindarin program is not found in default folder: /Sindarin');
+				vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin');
 			}
 			else if (OSIndex === 2) {
-				vscode.window.showInformationMessage('Sindarin program is not found in default folder: /Sindarin');
+				vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin');
 			}
 			else {
 				//TODO mesnagem que não reconheceu o commandline do OS
@@ -89,8 +89,6 @@ async function InterpreterCommand(mode: string): Promise<void> {
 	else {
 		//TODO mesnagem que não reconheceu o commandline do OS
 	}
-
-
 
 	//const file = vscode2.window.activeTextEditor.document.uri.fsPath;
 	const doc = vscode.window.activeTextEditor?.document;
@@ -136,12 +134,24 @@ async function InterpreterCommand(mode: string): Promise<void> {
 	// 	new vscode.ShellExecution("\"& {&\'" + commandLinePower + "\' " + fileName + " --walk --all --json " + "}\"", options), [""]);
 	var taskTemp: vscode.Task;
 	if (mode !== 'update') {
-		taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
-			new vscode.ShellExecution(commandLinePower, [fileName, "--" + mode, "--all", "--code"], options), [""]);
+		if (OSIndex !== 2) {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution(commandLinePower, [fileName, "--" + mode, "--all", "--code"], options), [""]);
+		}
+		else {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution("dotnet", [commandLinePower + "dll", fileName, "--" + mode, "--all", "--code"], options), [""]);
+		}
 	}
 	else {
-		taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
-			new vscode.ShellExecution(commandLinePower, ["--" + mode, "--code"], options), [""]);
+		if (OSIndex !== 2) {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution(commandLinePower, ["--" + mode, "--code"], options), [""]);
+		}
+		else {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution("dotnet", [commandLinePower + ".dll", "--" + mode, "--code"], options), [""]);
+		}
 	}
 	vscode.tasks.executeTask(taskTemp);
 
@@ -222,7 +232,7 @@ async function VerifyOS(): Promise<void> {
 				// 			await InstallSindarin();
 				// 		}
 				// 	});
-					vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', goToWebsite)
+				vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', goToWebsite)
 					.then(async selection => {
 						if (selection === goToWebsite) {
 							vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
@@ -266,20 +276,70 @@ async function VerifyOS(): Promise<void> {
 					// 		}
 					// 	});
 					vscode.window.showInformationMessage('Sindarin program is not found in default folder: c:\\Sindarin', goToWebsite)
-					.then(async selection => {
-						if (selection === goToWebsite) {
-							vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
-							return;
-						}
-					});
+						.then(async selection => {
+							if (selection === goToWebsite) {
+								vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+								return;
+							}
+						});
 
 				}
 			}
 			//Verifica se é macOS
 			else {
 				//Fazer um comando para verificar se é macOS
-				OSIndex = 2;
-				pathSin = "/Sindarin";
+				try {
+					testOS2 = await execShell("sw_vers", options);
+				}
+				catch {
+					testOS2 = null;
+				}
+				if (testOS2) {
+					OSIndex = 2;
+					var verifyDotNet: boolean;
+					try {
+						verifyDotNet = await execShellBool("dotnet ~/Sindarin/Sindarin.dll", options);
+					}
+					catch {
+						verifyDotNet = false;
+					}
+					if (!verifyDotNet) {
+						vscode.window.showInformationMessage('The Sindarin program for macOS needs .Net installed in the system. See more information on the website', goToWebsite)
+							.then(async selection => {
+								if (selection === goToWebsite) {
+									vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+									return;
+								}
+							});
+					}
+					try {
+						verifySin = await execShellBool("dotnet ~/Sindarin/Sindarin.dll", options);
+					}
+					catch {
+						verifySin = false;
+					}
+					if (verifySin) {
+						pathSin = "~/Sindarin";
+					}
+					else {
+						vscode.window.showInformationMessage('Sindarin program is not found in default folder: ~/Sindarin', goToWebsite)
+							.then(async selection => {
+								if (selection === goToWebsite) {
+									vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+									return;
+								}
+							});
+					}
+				}
+				else {
+					vscode.window.showInformationMessage('Operation system not identified', goToWebsite)
+						.then(async selection => {
+							if (selection === goToWebsite) {
+								vscode.env.openExternal(vscode.Uri.parse("https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode"));
+								return;
+							}
+						});
+				}
 			}
 		}
 	}
