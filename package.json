@@ -70,6 +70,12 @@
         "title": "Update",
         "category": "Sindarin",
         "icon": "resources/commandUpdate16pxmono.png"
+      },
+      {
+        "command": "sindarin-for-vscode.manual",
+        "title": "Manual",
+        "category": "Sindarin",
+        "icon": "resources/commandManual16pxmono.png"
       }
     ],
     "menus": {
@@ -88,6 +94,12 @@
         },
         {
           "command": "sindarin-for-vscode.update",
+          "alt": "markdown.showPreviewToSide",
+          "group": "navigation",
+          "when": "editorLangId == sindarin"
+        },
+        {
+          "command": "sindarin-for-vscode.manual",
           "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "editorLangId == sindarin"

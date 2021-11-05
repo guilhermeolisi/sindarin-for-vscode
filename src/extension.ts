@@ -41,6 +41,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(walkCommand);
 
+	let manualCommand = vscode.commands.registerCommand('sindarin-for-vscode.manual', () => {
+		InterpreterCommand("manual");
+	});
+	context.subscriptions.push(manualCommand);
 
 }
 // this method is called when your extension is deactivated
@@ -133,7 +137,7 @@ async function InterpreterCommand(mode: string): Promise<void> {
 	// const taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `TestTask ${definition.number}`, definition.type,
 	// 	new vscode.ShellExecution("\"& {&\'" + commandLinePower + "\' " + fileName + " --walk --all --json " + "}\"", options), [""]);
 	var taskTemp: vscode.Task;
-	if (mode !== 'update') {
+	if (mode === 'interpret' || mode === 'walk') {
 		if (OSIndex !== 2) {
 			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
 				new vscode.ShellExecution(commandLinePower, [fileName, "--" + mode, "--all", "--code"], options), [""]);
@@ -143,7 +147,7 @@ async function InterpreterCommand(mode: string): Promise<void> {
 				new vscode.ShellExecution("dotnet", [commandLinePower + ".dll", fileName, "--" + mode, "--all", "--code"], options), [""]);
 		}
 	}
-	else {
+	else if (mode === 'update') {
 		if (OSIndex !== 2) {
 			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
 				new vscode.ShellExecution(commandLinePower, ["--" + mode, "--code"], options), [""]);
@@ -153,8 +157,20 @@ async function InterpreterCommand(mode: string): Promise<void> {
 				new vscode.ShellExecution("dotnet", [commandLinePower + ".dll", "--" + mode, "--code"], options), [""]);
 		}
 	}
+	else if (mode === 'manual') {
+		if (OSIndex !== 2) {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution(commandLinePower, ["--" + mode], options), [""]);
+		}
+		else {
+			taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+				new vscode.ShellExecution("dotnet", [commandLinePower + ".dll", "--" + mode], options), [""]);
+		}
+	}
+	else {
+		return;
+	}
 	vscode.tasks.executeTask(taskTemp);
-
 }
 
 async function VerifyOS(): Promise<void> {
@@ -252,13 +268,13 @@ async function VerifyOS(): Promise<void> {
 				// taskTemp.presentationOptions.reveal = vscode.TaskRevealKind.Never;
 				// vscode.tasks.executeTask(taskTemp);
 				// testOS2 = true;
-				
+
 				testOS2 = await execShellBool('powershell Get-CimInstance Win32_OperatingSystem', options);
 			}
 			catch {
 				testOS2 = false;
 			}
-			if (!testOS2){
+			if (!testOS2) {
 				try {
 					testOS2 = await execShellBool('cmd Get-CimInstance Win32_OperatingSystem', options);
 				}
