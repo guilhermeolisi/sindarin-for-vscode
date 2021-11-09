@@ -207,7 +207,7 @@ async function InterpreterCommand(mode: string): Promise<void> {
 				isNeedUpdate = await execShellBool("du -hs " + fileNeedUpdate, options);
 			}
 			else if (OSIndex === 2) {
-
+				isNeedUpdate = await execShellBool("find " + fileNeedUpdate, options);
 			}
 		}
 		catch {
