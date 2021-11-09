@@ -170,7 +170,149 @@ async function InterpreterCommand(mode: string): Promise<void> {
 	else {
 		return;
 	}
-	vscode.tasks.executeTask(taskTemp);
+
+	if (mode !== 'update' || OSIndex === 0) {
+		vscode.tasks.executeTask(taskTemp);
+	}
+	else {
+		var fileUpdate = "SindarinInstaller";
+		var folderSindarin = "";
+		var folderSindarinInstaller = "sindarininstaller";
+		var fileNeedUpdate = "needtoUpdate.txt";
+		if (OSIndex === 0) {
+			folderSindarin = "C:\\Sindarin";
+			folderSindarinInstaller = folderSindarin + "\\" + folderSindarinInstaller;
+			fileUpdate = path.join(folderSindarin, fileUpdate + ".exe");
+		}
+		else {//} if (OSIndex === 1) {
+			folderSindarin = "~/Sindarin";
+			folderSindarinInstaller = folderSindarin + "/" + folderSindarinInstaller;
+			fileUpdate = path.join(folderSindarin, fileUpdate);
+
+		}
+		// else {//if (OSIndex === 2) {
+		// 	folderSindarin = "~/Sindarin";
+		// 	folderSindarinInstaller = folderSindarin + "/" + folderSindarinInstaller;
+		// 	fileUpdate = "/" + fileUpdate;
+
+		// }
+		fileNeedUpdate = path.join(folderSindarin, fileNeedUpdate);
+		var isNeedUpdate: boolean = false;
+
+		try {
+			if (OSIndex === 0) {
+				try {
+					isNeedUpdate = await execShellBool("Start-Process powershell.exe -ArgumentList \"Write-Host((Get-Item " + fileNeedUpdate + ").length/1KB)\"", options);
+				}
+				catch {
+
+				}
+			}
+			if (OSIndex === 1) {
+				isNeedUpdate = await execShellBool("du -hs " + fileNeedUpdate, options);
+			}
+		}
+		catch {
+			isNeedUpdate = false;
+		}
+
+		if (isNeedUpdate) {
+			if (OSIndex !== 2) {
+				taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+					new vscode.ShellExecution(fileUpdate, [folderSindarin], options), [""]);
+			}
+			else {
+				taskTemp = new vscode.Task(definition, vscode.TaskScope.Workspace, `Sindarin ${mode}`, definition.type,
+					new vscode.ShellExecution("dotnet", [fileUpdate + ".dll", folderSindarin], options), [""]);
+			}
+		}
+		vscode.tasks.executeTask(taskTemp);
+
+
+		// if (mode !== 'update') {
+		// 	vscode.tasks.executeTask(taskTemp);
+		// }
+		// else {
+		// 	var fileZip; // = "sindarin.zip"
+
+		// 	var fileSindarin = "Sindarin";
+		// 	var fileUpdate = "SindarinUpdate";
+		// 	var folderSindarin;
+		// 	var folderSindarinInstaller = "sindarininstaller";
+		// 	var commandSinFolder;
+		// 	var argsFolder;
+		// 	if (OSIndex === 0) {
+		// 		fileZip = "C:\\Sindarin\\sindarin.zip";
+		// 		fileSindarin = "\\" + fileSindarin + ".exe";
+		// 		folderSindarin = "C:\\Sindarin";
+		// 		folderSindarinInstaller = folderSindarin + "\\" + folderSindarinInstaller;
+		// 		fileUpdate = "\\" + fileUpdate + ".exe";
+		// 		commandSinFolder = "Start-Process";
+		// 		argsFolder = ["powershell.exe", "-Verb", "RunAs", "-ArgumentList", '\"md ' + folderSindarin + '\"'];
+		// 	}
+		// 	else if (OSIndex === 1) {
+		// 		fileZip = "~/Sindarin/linux64.zip";
+		// 		folderSindarin = "~/Sindarin";
+		// 		folderSindarinInstaller = folderSindarin + "/" + folderSindarinInstaller;
+		// 		fileSindarin = "/" + fileSindarin;
+		// 		fileUpdate = "/" + fileUpdate;
+
+		// 		commandSinFolder = "mkdir";
+		// 		argsFolder = [folderSindarin];
+		// 	}
+		// 	else if (OSIndex === 2) {
+		// 		fileZip = "~/Sindarin/macos64.zip";
+		// 		folderSindarin = "~/Sindarin";
+		// 		folderSindarinInstaller = folderSindarin + "/" + folderSindarinInstaller;
+		// 		fileSindarin = "/" + fileSindarin;
+		// 		fileUpdate = "/" + fileUpdate;
+
+		// 		commandSinFolder = "mkdir";
+		// 		argsFolder = [folderSindarin];
+		// 	}
+		// 	if (!fileZip || !commandSinFolder || !argsFolder) {
+		// 		return;
+		// 	}
+
+		// 	vscode.tasks.executeTask(taskTemp);
+		// 	var cont: boolean = true;
+		// 	while (cont) {
+		// 		sleep(500);
+		// 		cont = !(await execShellBool("Get-ChildItem " + folderSindarinInstaller + " -Recurse | Measure-Object -Property Length -Sum).Sum", options));
+		// 	}
+
+		// 	var size: string = "-1";
+		// 	var size2: string = "-2";
+		// 	cont = true;
+		// 	while (!cont) {
+		// 		try {
+		// 			if (OSIndex === 0) {
+		// 				//(Get-ChildItem C:\PowderCell -Recurse | Measure-Object -Property Length -Sum).Sum
+		// 				size = await execShell("Get-ChildItem " + folderSindarinInstaller + " -Recurse | Measure-Object -Property Length -Sum).Sum", options);
+		// 			}
+		// 			else if (OSIndex === 1) {
+		// 				size = await execShell("du -hs " + folderSindarinInstaller, options);
+		// 			}
+		// 			else if (OSIndex === 2) {
+
+		// 			}
+		// 			if (size === size2) {
+		// 				cont = true;
+		// 			}
+		// 			else {
+		// 				cont = false;
+		// 				size2 = size;
+		// 			}
+		// 		}
+		// 		catch {
+		// 			cont = false;
+		// 		}
+		// 		if (!cont) {
+		// 			await sleep(1000);
+		// 		}
+		// 	}
+
+	}
 }
 
 async function VerifyOS(): Promise<void> {
