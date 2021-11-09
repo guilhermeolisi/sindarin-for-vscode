@@ -187,7 +187,7 @@ async function InterpreterCommand(mode: string): Promise<void> {
 		else {//} if (OSIndex === 1) {
 			folderSindarin = "~/Sindarin";
 			folderSindarinInstaller = folderSindarin + "/" + folderSindarinInstaller;
-			fileUpdate = path.join(folderSindarin, fileUpdate);
+			fileUpdate = path.join(folderSindarin, "sindarininstaller",fileUpdate);
 
 		}
 		// else {//if (OSIndex === 2) {
@@ -201,20 +201,20 @@ async function InterpreterCommand(mode: string): Promise<void> {
 
 		try {
 			if (OSIndex === 0) {
-				try {
-					isNeedUpdate = await execShellBool("Start-Process powershell.exe -ArgumentList \"Write-Host((Get-Item " + fileNeedUpdate + ").length/1KB)\"", options);
-				}
-				catch {
-
-				}
+				isNeedUpdate = await execShellBool("Start-Process powershell.exe -ArgumentList \"Write-Host((Get-Item " + fileNeedUpdate + ").length/1KB)\"", options);
 			}
-			if (OSIndex === 1) {
+			else if (OSIndex === 1) {
 				isNeedUpdate = await execShellBool("du -hs " + fileNeedUpdate, options);
+			}
+			else if (OSIndex === 2) {
+
 			}
 		}
 		catch {
 			isNeedUpdate = false;
+
 		}
+
 
 		if (isNeedUpdate) {
 			if (OSIndex !== 2) {
