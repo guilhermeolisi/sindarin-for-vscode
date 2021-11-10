@@ -30,7 +30,8 @@
     "onLanguage:sindarin",
     "onCommand:sindarin-for-vscode.interpret",
     "onCommand:sindarin-for-vscode.walk",
-    "onCommand:sindarin-for-vscode.update"
+    "onCommand:sindarin-for-vscode.update",
+    "onCommand:sindarin-for-vscode.manual"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -48,6 +49,10 @@
       {
         "command": "sindarin-for-vscode.update",
         "key": "ctrl+shift+u"
+      },
+      {
+        "command": "sindarin-for-vscode.manual",
+        "key": "ctrl+shift+m"
       }
     ],
     "commands": [
