@@ -39,25 +39,40 @@ Also, the [Chart.js Preview](https://github.com/chartjs/Chart.js) extension is i
 
 ## Requirements
 
-It is necessary to download the Sindarin program from the website.
-the program needs to be in the default folder on your computer:
-* Windows: C:\Sindarin
-* Linux: ~/Sindarin
-* macOS: ~/Sindarin
+You need the Sindarin program installed on your computer. The extension locates it in the following order:
 
-If you want other folder, you need to include the path in the PATH environment variable in your operating system to allow the extension to find and run the Sindarin program. If you don't use the default folder the update cannot be completed within VS Code on Linux and macOS, but it will work normally by command line. On Windows it will work normally within VS Code.
+1. **`sindarin.executablePath` setting** *(recommended for custom locations)* — the full path to the Sindarin executable (or to `Sindarin.dll` on macOS). A leading `~` is expanded to your home folder.
+2. **System PATH** — if `Sindarin` is available on your `PATH` it will be used.
+3. **Default folder** — used when neither of the above is set:
+   * Windows: `C:\Sindarin`
+   * Linux: `~/Sindarin`
+   * macOS: `~/Sindarin`
 
-On macOS it is necessary the [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) runtime installed on the machine.
+To set a custom path, open VS Code Settings, search for *Sindarin*, and fill in **Sindarin: Executable Path** — or add to your `settings.json`:
+
+```json
+{
+  "sindarin.executablePath": "D:\\Tools\\Sindarin\\Sindarin.exe"
+}
+```
+
+> When Sindarin is **not** in the default folder, the in-editor **Update** command may not complete on Linux and macOS (it still works from the command line). On Windows it works normally.
+
+On macOS the [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) runtime must be installed on the machine.
 
 ### Download Sindarin
 
-Download the compacted file for:
-* [Windows 64x](https://sindarin.s3.sa-east-1.amazonaws.com/windows64.zip)
-* [Windows 86x](https://sindarin.s3.sa-east-1.amazonaws.com/windows86.zip)
-* [Linux 64x](https://sindarin.s3.sa-east-1.amazonaws.com/linux64.zip)
-* [macOS 64x](https://sindarin.s3.sa-east-1.amazonaws.com/macos64.zip)
+Download the package for your platform (current version **0.1.90.0**):
 
-Unzip the downloaded file to standard folder. On linux, the program was tested only on Ubuntu distribution
+* [Windows x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-x64.zip)
+* [Windows x86](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-x86.zip)
+* [Windows ARM64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-arm64.zip)
+* [Linux x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-linux-x64.zip)
+* [macOS x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-macos-x64.zip)
+
+Unzip the downloaded file into the default folder (or into the folder you configured in `sindarin.executablePath`). On Linux, the program was tested only on the Ubuntu distribution.
+
+The always-current release manifest is published at [version.json](https://nimlothrelease.blob.core.windows.net/sindarinrelease/version.json) — the extension's **Update** command uses it to keep Sindarin up to date automatically, so you normally only need to download manually for the first install.
 
 ## About Sindarin Library
 
