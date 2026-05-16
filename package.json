@@ -10,9 +10,9 @@
     "type": "git",
     "url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
   },
-  "version": "0.1.7",
+  "version": "0.2.0",
   "engines": {
-    "vscode": "^1.61.0"
+    "vscode": "^1.85.0"
   },
   "keywords": [
     "sindarin",
@@ -29,14 +29,20 @@
     "Extension Packs"
   ],
   "activationEvents": [
-    "onLanguage:sindarin",
-    "onCommand:sindarin-for-vscode.interpret",
-    "onCommand:sindarin-for-vscode.walk",
-    "onCommand:sindarin-for-vscode.update",
-    "onCommand:sindarin-for-vscode.manual"
+    "onLanguage:sindarin"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Sindarin",
+      "properties": {
+        "sindarin.executablePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to the Sindarin executable (or `Sindarin.dll` on macOS). Supports a leading `~` for the home directory. When empty, the extension looks for `Sindarin` on the system PATH and then in the default folder (`C:\\Sindarin` on Windows, `~/Sindarin` otherwise)."
+        }
+      }
+    },
     "keybindings": [
       {
         "command": "sindarin-for-vscode.interpret",
@@ -62,15 +68,13 @@
         "command": "sindarin-for-vscode.interpret",
         "title": "Interpret",
         "category": "Sindarin",
-        "icon": "resources/commandInterpret16pxmono.png",
-        "when": "editorLangId == sindarin"
+        "icon": "resources/commandInterpret16pxmono.png"
       },
       {
         "command": "sindarin-for-vscode.walk",
         "title": "Walk",
         "category": "Sindarin",
-        "icon": "resources/commandWalk16pxmono.png",
-        "when": "editorLangId == sindarin"
+        "icon": "resources/commandWalk16pxmono.png"
       },
       {
         "command": "sindarin-for-vscode.update",
@@ -89,25 +93,21 @@
       "editor/title": [
         {
           "command": "sindarin-for-vscode.interpret",
-          "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
           "command": "sindarin-for-vscode.walk",
-          "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
           "command": "sindarin-for-vscode.update",
-          "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
           "command": "sindarin-for-vscode.manual",
-          "alt": "markdown.showPreviewToSide",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         }
@@ -138,24 +138,27 @@
     "RandomFractalsInc.vscode-chartjs"
   ],
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "compile-tests": "tsc -p . --outDir out",
+    "pretest": "npm run compile-tests && npm run compile",
+    "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/glob": "^7.1.4",
-    "@types/mocha": "^9.0.0",
-    "@types/node": "^14.17.32",
-    "@types/vscode": "^1.61.0",
-    "@typescript-eslint/eslint-plugin": "^4.31.1",
-    "@typescript-eslint/parser": "^4.31.1",
-    "@vscode/test-electron": "^1.6.2",
-    "eslint": "^7.32.0",
-    "glob": "^7.1.7",
-    "mocha": "^9.1.1",
-    "typescript": "^4.4.3"
+    "@eslint/js": "^9.17.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.5",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.17.0",
+    "mocha": "^10.8.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0"
   }
 }
