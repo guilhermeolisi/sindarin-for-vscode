@@ -1,0 +1,83 @@
+name: Publish Extension
+
+# Publishes the extension to the Visual Studio Marketplace and Open VSX.
+#
+# Triggers:
+#   - pushing a version tag (e.g. `v0.2.0`)
+#   - manually from the Actions tab ("Run workflow")
+#
+# Required repository secrets:
+#   - VSCE_PAT  : Azure DevOps Personal Access Token for the `sindarincorp`
+#                 publisher (Marketplace > Manage Publishers > Personal Access Token).
+#   - OVSX_PAT  : Open VSX access token (https://open-vsx.org/user-settings/tokens).
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Verify tag matches package.json version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $PKG_VERSION"
+            exit 1
+          fi
+
+      - run: npm run check-types
+
+      - run: npm run lint
+
+      - name: Run integration tests
+        run: xvfb-run -a npm test
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Package extension
+        run: npm run package-vsix
+
+      - name: Publish to Visual Studio Marketplace
+        run: npm run publish:vsce
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Publish to Open VSX
+        run: npm run publish:ovsx
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+
+      - name: Upload .vsix artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sindarin-for-vscode-vsix
+          path: sindarin-for-vscode.vsix

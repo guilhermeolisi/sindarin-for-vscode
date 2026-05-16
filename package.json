@@ -146,7 +146,10 @@
     "lint": "eslint src",
     "compile-tests": "tsc -p . --outDir out",
     "pretest": "npm run compile-tests && npm run compile",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package-vsix": "vsce package -o sindarin-for-vscode.vsix",
+    "publish:vsce": "vsce publish -i sindarin-for-vscode.vsix",
+    "publish:ovsx": "ovsx publish sindarin-for-vscode.vsix"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -155,9 +158,11 @@
     "@types/vscode": "^1.85.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.1",
     "esbuild": "^0.28.0",
     "eslint": "^9.17.0",
     "mocha": "^10.8.2",
+    "ovsx": "^0.10.1",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.0"
   }
