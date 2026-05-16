@@ -73,7 +73,7 @@ A dedicated code editor with various diffraction and syntax tools will be availa
     * with isotropic and anisotropic function for size and microstrain
 * Fundamental Parameters Approach (FPA), for an accurate instrumental profile calculation
 * Whole Pattern Powder Modeling (WPPM), for microstrucutre calculation
-    * Size crystals distribuction for some geometries
+    * Crystals size distribuction
     * Dislocation
     * Stacking fault
 * Intensity corrections
@@ -103,8 +103,8 @@ A dedicated code editor with various diffraction and syntax tools will be availa
 * Multiple data file
 * Simultaneous refinement of multiple diffraction measurements
 
-At the moment Sindarin calcule **Powder X-Ray Diffraction** Pattern
+At the moment Sindarin calcule **X-Ray Powder Diffraction** Pattern
 
-More information about Sindarin can be found in the manual.
+More information about Sindarin can be found in site: [https://sindarinapp.wordpress.com/](https://sindarinapp.wordpress.com/)
 
 **Have a Good Work!**

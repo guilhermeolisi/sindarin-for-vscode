@@ -1,8 +1,8 @@
 {
   "name": "sindarin-for-vscode",
-  "publisher": "goSiqueira",
+  "publisher": "sindarincorp",
   "author": "Guilherme Oliveira Siqueira",
-  "displayName": "Sindarin for Visual Studio Code",
+  "displayName": "Sindarin for VSCode",
   "icon": "resources/Sindarin128pxColor.png",
   "license": "MIT",
   "description": "Extension for Sindarin, a program for crystal diffraction calculations",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
   },
-  "version": "0.1.6",
+  "version": "0.1.7",
   "engines": {
     "vscode": "^1.61.0"
   },
@@ -19,7 +19,9 @@
     "x-ray",
     "diffraction",
     "crystal",
-    "crystallography"
+    "crystallography",
+    "rietveld",
+    "refinement"
   ],
   "categories": [
     "Other",

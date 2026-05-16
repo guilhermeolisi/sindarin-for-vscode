@@ -1,29 +1,29 @@
 {
-    "comments": {
-      "lineComment": "//",
-    },
-    "brackets": [
-      ["{", "}"],
-      ["[", "]"],
-      ["(", ")"]
-    ],
-    "autoClosingPairs": [
-      { "open": "{", "close": "}" },
-      { "open": "[", "close": "]" },
-      { "open": "(", "close": ")" },
-      { "open": "\"", "close": "\"", "notIn": ["string"] },
-    ],
-    "surroundingPairs": [
-      ["{", "}"],
-      ["[", "]"],
-      ["(", ")"],
-      ["\"", "\""]
-    ],
-    "wordPattern": "(@?(\\+|\\-)?\\d+(\\.\\d+)?((E|e)(+|-)?\\d+)?)|([^\\`\\~\\!\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)|\\{.*\\}",
-      "onEnterRules": [
-        {
-          "beforeText": "^(?i)\\s*(experimental|simulation|phase).*?:\\s*$",
-          "action": { "indent": "indent" }
-        }
-      ]
-  }
+	"comments": {
+		"lineComment": "//",
+		"blockComment": ["/*", "*/"]
+	},
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"]
+	],
+	"autoClosingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		{ "open": "\"", "close": "\"", "notIn": ["string", "comment"] }
+	],
+	"surroundingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["\"", "\""]
+	],
+	"folding": {
+		"markers": {
+			"start": "^\\s*//\\s*#region\\b|^\\s*\\(\\*\\s*#region(.*)\\*\\)",
+			"end": "^\\s*//\\s*#endregion\\b|^\\s*\\(\\*\\s*#endregion\\s*\\*\\)"
+		}
+	}
+}

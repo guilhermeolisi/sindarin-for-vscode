@@ -80,23 +80,23 @@ async function InterpreterCommand(mode: string): Promise<void> {
 			return;
 		}
 	}
-	var command: string;
-	if (OSIndex === 0) {
-		//commandLinePower = "sudo " + commandLinePower;
-	}
-	else if (OSIndex === 1) {
-		//vscode.window.showInformationMessage('Sindarin program is not found in default folder: C:\\Sindarin');
-	}
-	else if (OSIndex === 2) {
-		//vscode.window.showInformationMessage('Sindarin program is not found in default folder: /Sindarin');
-	}
-	else {
-		//TODO mesnagem que não reconheceu o commandline do OS
-	}
+	// var command: string;
+	// if (OSIndex === 0) {
+	// 	//commandLinePower = "sudo " + commandLinePower;
+	// }
+	// else if (OSIndex === 1) {
+	// 	//vscode.window.showInformationMessage('Sindarin program is not found in default folder: C:\\Sindarin');
+	// }
+	// else if (OSIndex === 2) {
+	// 	//vscode.window.showInformationMessage('Sindarin program is not found in default folder: /Sindarin');
+	// }
+	// else {
+	// 	//TODO mesnagem que não reconheceu o commandline do OS
+	// }
 
 	//const file = vscode2.window.activeTextEditor.document.uri.fsPath;
+	//const dirt = vscode.window.activeTextEditor?.document.isDirty;
 	const doc = vscode.window.activeTextEditor?.document;
-	const dirt = vscode.window.activeTextEditor?.document.isDirty;
 	if (doc?.isUntitled) {
 		const saved = await doc.save();
 		vscode.window.showInformationMessage(`Document ${saved ? "was" : "was not"} saved. Check document is still open.`);
