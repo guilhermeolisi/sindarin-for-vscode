@@ -62,13 +62,13 @@ On macOS the [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) runtime 
 
 ### Download Sindarin
 
-Download the package for your platform (current version **0.1.90.0**):
+Download the package for your platform (these links always point to the latest release):
 
-* [Windows x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-x64.zip)
-* [Windows x86](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-x86.zip)
-* [Windows ARM64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-windows-arm64.zip)
-* [Linux x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-linux-x64.zip)
-* [macOS x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-0.1.90.0-macos-x64.zip)
+* [Windows x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-windows-x64.zip)
+* [Windows x86](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-windows-x86.zip)
+* [Windows ARM64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-windows-arm64.zip)
+* [Linux x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-linux-x64.zip)
+* [macOS x64](https://nimlothrelease.blob.core.windows.net/sindarinrelease/Sindarin-macos-x64.zip)
 
 Unzip the downloaded file into the default folder (or into the folder you configured in `sindarin.executablePath`). On Linux, the program was tested only on the Ubuntu distribution.
 
