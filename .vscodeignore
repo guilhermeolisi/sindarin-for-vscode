@@ -7,6 +7,13 @@ node_modules/**
 .gitignore
 .git/**
 .github/**
+.gitmodules
+grammar/.git
+grammar/.gitignore
+grammar/README.md
+grammar/package.json
+grammar/package.nls.json
+grammar/cgmanifest.json
 esbuild.js
 eslint.config.mjs
 vsc-extension-quickstart.md

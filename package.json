@@ -123,13 +123,13 @@
           "Sindarin",
           "sin"
         ],
-        "configuration": "./syntaxe/language-configuration.json"
+        "configuration": "./grammar/language-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "sindarin",
-        "path": "./syntaxe/sindarin.tmLanguage.json",
+        "path": "./grammar/syntaxes/sindarin.tmLanguage.json",
         "scopeName": "source.sin"
       }
     ]

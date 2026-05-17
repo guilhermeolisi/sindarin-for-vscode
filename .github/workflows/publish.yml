@@ -7,9 +7,13 @@ name: Publish Extension
 #   - manually from the Actions tab ("Run workflow")
 #
 # Required repository secrets:
-#   - VSCE_PAT  : Azure DevOps Personal Access Token for the `goSiqueira`
-#                 publisher (Marketplace > Manage Publishers > Personal Access Token).
-#   - OVSX_PAT  : Open VSX access token (https://open-vsx.org/user-settings/tokens).
+#   - VSCE_PAT    : Azure DevOps Personal Access Token for the `goSiqueira`
+#                   publisher (Marketplace > Manage Publishers > Personal Access Token).
+#   - OVSX_PAT    : Open VSX access token (https://open-vsx.org/user-settings/tokens).
+#   - GRAMMAR_PAT : GitHub PAT with read access to the private
+#                   `guilhermeolisi/sindarin-grammar` submodule repository
+#                   (classic PAT with `repo` scope, or a fine-grained PAT
+#                   granting Contents:Read on that repo).
 
 on:
   push:
@@ -25,6 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GRAMMAR_PAT }}
 
       - uses: actions/setup-node@v4
         with:
@@ -55,6 +62,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          token: ${{ secrets.GRAMMAR_PAT }}
 
       - uses: actions/setup-node@v4
         with:

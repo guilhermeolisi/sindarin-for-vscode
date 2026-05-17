@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [0.2.0]
 
+- The Sindarin TextMate grammar and language configuration are now sourced
+  from the shared `sindarin-grammar` repository as a git submodule (mounted
+  at `grammar/`), so the syntax is maintained in a single place.
 - Rewrote the extension core: platform detection now uses Node's `os`/`process`
   instead of spawning shell commands, and the Sindarin executable is located by
   checking the filesystem and PATH instead of running the program.
