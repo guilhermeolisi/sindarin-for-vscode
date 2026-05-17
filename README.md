@@ -58,7 +58,7 @@ To set a custom path, open VS Code Settings, search for *Sindarin*, and fill in 
 
 > When Sindarin is **not** in the default folder, the in-editor **Update** command may not complete on Linux and macOS (it still works from the command line). On Windows it works normally.
 
-On macOS the [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0) runtime must be installed on the machine.
+On macOS the [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) runtime must be installed on the machine.
 
 ### Download Sindarin
 
@@ -120,6 +120,6 @@ A dedicated code editor with various diffraction and syntax tools will be availa
 
 At the moment Sindarin calcule **X-Ray Powder Diffraction** Pattern
 
-More information about Sindarin can be found in site: [https://sindarinapp.wordpress.com/](https://sindarinapp.wordpress.com/)
+More information about Sindarin can be found in site: [https://nimloth.app/sindarin/](https://nimloth.app/sindarin/)
 
 **Have a Good Work!**
