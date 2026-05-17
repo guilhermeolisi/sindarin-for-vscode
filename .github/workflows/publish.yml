@@ -1,15 +1,14 @@
 name: Publish Extension
 
-# Publishes the extension to the Visual Studio Marketplace and Open VSX.
+# Publishes the extension to the Visual Studio Marketplace.
 #
 # Triggers:
 #   - pushing a version tag (e.g. `v0.2.0`)
 #   - manually from the Actions tab ("Run workflow")
 #
 # Required repository secrets:
-#   - VSCE_PAT : Azure DevOps Personal Access Token for the `goSiqueira`
+#   - VSCE_PAT : Azure DevOps Personal Access Token for the `sindarincorp`
 #                publisher (Marketplace > Manage Publishers > Personal Access Token).
-#   - OVSX_PAT : Open VSX access token (https://open-vsx.org/user-settings/tokens).
 #
 # The sindarin-grammar submodule is public, so it is checked out with the
 # default token (no extra secret required).
@@ -77,11 +76,6 @@ jobs:
         run: npm run publish:vsce
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
-      - name: Publish to Open VSX
-        run: npm run publish:ovsx
-        env:
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
 
       - name: Upload .vsix artifact
         uses: actions/upload-artifact@v4

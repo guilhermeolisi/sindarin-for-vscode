@@ -1,8 +1,8 @@
 # sindarin-for-vscode
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/goSiqueira.sindarin-for-vscode?color=orange&label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode)
-[![Installs](https://img.shields.io/visual-studio-marketplace/i/goSiqueira.sindarin-for-vscode?color=orange)](https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode)
-[![Downloads](https://img.shields.io/visual-studio-marketplace/d/goSiqueira.sindarin-for-vscode?color=orange)](https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/sindarincorp.sindarin-for-vscode?color=orange&label=Marketplace)](https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-for-vscode)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/sindarincorp.sindarin-for-vscode?color=orange)](https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-for-vscode)
+[![Downloads](https://img.shields.io/visual-studio-marketplace/d/sindarincorp.sindarin-for-vscode?color=orange)](https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-for-vscode)
 
 [Sindarin](https://github.com/guilhermeolisi/sindarin-for-vscode) for [VS Code](https://code.visualstudio.com/)
 

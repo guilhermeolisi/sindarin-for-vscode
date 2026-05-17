@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-const EXTENSION_ID = 'goSiqueira.sindarin-for-vscode';
+const EXTENSION_ID = 'sindarincorp.sindarin-for-vscode';
 const COMMANDS = [
 	'sindarin-for-vscode.interpret',
 	'sindarin-for-vscode.walk',

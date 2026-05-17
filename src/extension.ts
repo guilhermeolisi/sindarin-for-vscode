@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 type SindarinMode = 'interpret' | 'walk' | 'update' | 'manual';
 
-const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode';
+const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-for-vscode';
 
 let outputChannel: vscode.OutputChannel;
 
