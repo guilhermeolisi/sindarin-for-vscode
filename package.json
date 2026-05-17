@@ -1,6 +1,6 @@
 {
-  "name": "sindarin-for-vscode",
-  "publisher": "goSiqueira",
+  "name": "sindarin-lang",
+  "publisher": "sindarincorp",
   "author": "Guilherme Oliveira Siqueira",
   "displayName": "Sindarin for VSCode",
   "icon": "resources/Sindarin128pxColor.png",
@@ -8,7 +8,7 @@
   "description": "Extension for Sindarin, a program for crystal diffraction calculations",
   "repository": {
     "type": "git",
-    "url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
+    "url": "https://github.com/guilhermeolisi/sindarin-lang.git"
   },
   "version": "0.2.0",
   "engines": {
@@ -45,45 +45,45 @@
     },
     "keybindings": [
       {
-        "command": "sindarin-for-vscode.interpret",
+        "command": "sindarin-lang.interpret",
         "key": "ctrl+shift+down",
         "when": "editorLangId == sindarin"
       },
       {
-        "command": "sindarin-for-vscode.walk",
+        "command": "sindarin-lang.walk",
         "key": "ctrl+shift+right",
         "when": "editorLangId == sindarin"
       },
       {
-        "command": "sindarin-for-vscode.update",
+        "command": "sindarin-lang.update",
         "key": "ctrl+shift+u"
       },
       {
-        "command": "sindarin-for-vscode.manual",
+        "command": "sindarin-lang.manual",
         "key": "ctrl+shift+m"
       }
     ],
     "commands": [
       {
-        "command": "sindarin-for-vscode.interpret",
+        "command": "sindarin-lang.interpret",
         "title": "Interpret",
         "category": "Sindarin",
         "icon": "resources/commandInterpret16pxmono.png"
       },
       {
-        "command": "sindarin-for-vscode.walk",
+        "command": "sindarin-lang.walk",
         "title": "Walk",
         "category": "Sindarin",
         "icon": "resources/commandWalk16pxmono.png"
       },
       {
-        "command": "sindarin-for-vscode.update",
+        "command": "sindarin-lang.update",
         "title": "Update",
         "category": "Sindarin",
         "icon": "resources/commandUpdate16pxmono.png"
       },
       {
-        "command": "sindarin-for-vscode.manual",
+        "command": "sindarin-lang.manual",
         "title": "Manual",
         "category": "Sindarin",
         "icon": "resources/commandManual16pxmono.png"
@@ -92,22 +92,22 @@
     "menus": {
       "editor/title": [
         {
-          "command": "sindarin-for-vscode.interpret",
+          "command": "sindarin-lang.interpret",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
-          "command": "sindarin-for-vscode.walk",
+          "command": "sindarin-lang.walk",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
-          "command": "sindarin-for-vscode.update",
+          "command": "sindarin-lang.update",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },
         {
-          "command": "sindarin-for-vscode.manual",
+          "command": "sindarin-lang.manual",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         }
@@ -147,8 +147,8 @@
     "compile-tests": "tsc -p . --outDir out",
     "pretest": "npm run compile-tests && npm run compile",
     "test": "vscode-test",
-    "package-vsix": "vsce package -o sindarin-for-vscode.vsix",
-    "publish:vsce": "vsce publish -i sindarin-for-vscode.vsix"
+    "package-vsix": "vsce package -o sindarin-lang.vsix",
+    "publish:vsce": "vsce publish -i sindarin-lang.vsix"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

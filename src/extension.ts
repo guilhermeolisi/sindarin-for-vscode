@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 type SindarinMode = 'interpret' | 'walk' | 'update' | 'manual';
 
-const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=goSiqueira.sindarin-for-vscode';
+const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-lang';
 
 let outputChannel: vscode.OutputChannel;
 
@@ -22,7 +22,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	const modes: SindarinMode[] = ['interpret', 'walk', 'update', 'manual'];
 	for (const mode of modes) {
 		context.subscriptions.push(
-			vscode.commands.registerCommand(`sindarin-for-vscode.${mode}`, () => runSindarin(mode)),
+			vscode.commands.registerCommand(`sindarin-lang.${mode}`, () => runSindarin(mode)),
 		);
 	}
 }
