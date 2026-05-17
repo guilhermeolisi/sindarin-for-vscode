@@ -1,12 +1,12 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-const EXTENSION_ID = 'sindarincorp.sindarin-lang';
+const EXTENSION_ID = 'goSiqueira.sindarin-for-vscode';
 const COMMANDS = [
-	'sindarin-lang.interpret',
-	'sindarin-lang.walk',
-	'sindarin-lang.update',
-	'sindarin-lang.manual',
+	'sindarin-for-vscode.interpret',
+	'sindarin-for-vscode.walk',
+	'sindarin-for-vscode.update',
+	'sindarin-for-vscode.manual',
 ];
 
 suite('Sindarin extension', () => {
