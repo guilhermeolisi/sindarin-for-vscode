@@ -72,7 +72,7 @@ Download the package for your platform (these links always point to the latest r
 
 Unzip the downloaded file into the default folder (or into the folder you configured in `sindarin.executablePath`). On Linux, the program was tested only on the Ubuntu distribution.
 
-The always-current release manifest is published at [version.json](https://nimlothrelease.blob.core.windows.net/sindarinrelease/version.json) — the extension's **Update** command uses it to keep Sindarin up to date automatically, so you normally only need to download manually for the first install.
+After the first install, the extension's **Update** command keeps Sindarin up to date automatically, so you normally only need to download manually once.
 
 ## About Sindarin Library
 
