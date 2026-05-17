@@ -80,5 +80,5 @@ jobs:
       - name: Upload .vsix artifact
         uses: actions/upload-artifact@v4
         with:
-          name: sindarin-for-vscode-vsix
-          path: sindarin-for-vscode.vsix
+          name: sindarin-lang-vsix
+          path: sindarin-lang.vsix
