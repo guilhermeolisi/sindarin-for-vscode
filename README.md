@@ -58,7 +58,12 @@ To set a custom path, open VS Code Settings, search for *Sindarin*, and fill in 
 
 > When Sindarin is **not** in the default folder, the in-editor **Update** command may not complete on Linux and macOS (it still works from the command line). On Windows it works normally.
 
-On macOS the [.NET 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) runtime must be installed on the machine.
+#### macOS — .NET runtime
+
+On macOS, Sindarin requires the [.NET runtime](https://dotnet.microsoft.com/en-us/download/dotnet) to be installed. The extension automatically checks whether the correct version is available the first time you run a command. If it is not installed, a notification will appear with two options:
+
+- **Install automatically** — downloads and installs the runtime silently in the background using the official Microsoft install script (no administrator password required).
+- **Download page** — opens the .NET download page in your browser so you can install it manually.
 
 ### Download Sindarin
 
