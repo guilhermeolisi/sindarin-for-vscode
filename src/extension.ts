@@ -2,10 +2,30 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as cp from 'child_process';
 
 type SindarinMode = 'interpret' | 'walk' | 'update' | 'manual';
 
 const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-lang';
+
+/** Official Microsoft script for installing the .NET runtime without sudo. */
+const DOTNET_INSTALL_SCRIPT_URL = 'https://dot.net/v1/dotnet-install.sh';
+
+/**
+ * Known dotnet CLI locations on macOS.
+ * VS Code opened from the Dock does not inherit the full shell PATH, so the
+ * system-level PATH search misses dotnet even when it is installed.
+ * Listed in order of preference (most common first).
+ */
+const DOTNET_KNOWN_PATHS_MACOS = [
+	'/usr/local/bin/dotnet',                          // Intel, official installer symlink
+	'/opt/homebrew/bin/dotnet',                       // Apple Silicon, Homebrew
+	path.join(os.homedir(), '.dotnet', 'dotnet'),    // dotnet-install.sh default (~/.dotnet)
+	'/usr/local/share/dotnet/dotnet',                 // Intel, official installer direct
+];
+
+/** Cache: once the runtime is confirmed for this VS Code session, skip re-checking. */
+let macOsRuntimeVerified = false;
 
 let outputChannel: vscode.OutputChannel;
 
@@ -73,6 +93,26 @@ function findOnPath(name: string): string | undefined {
 }
 
 /**
+ * Finds the dotnet CLI executable.
+ * Checks the system PATH first; on macOS, also checks known installation
+ * paths for when VS Code is opened from the Dock (no full shell PATH).
+ */
+function findDotnet(): string | undefined {
+	const onPath = findOnPath('dotnet');
+	if (onPath) {
+		return onPath;
+	}
+	if (process.platform === 'darwin') {
+		for (const p of DOTNET_KNOWN_PATHS_MACOS) {
+			if (fs.existsSync(p)) {
+				return p;
+			}
+		}
+	}
+	return undefined;
+}
+
+/**
  * Resolves how Sindarin should be invoked, in priority order:
  *   1. the `sindarin.executablePath` setting, if it points to an existing file;
  *   2. `Sindarin` available on the system PATH;
@@ -113,10 +153,200 @@ function resolveSindarin(): SindarinLauncher | undefined {
 function makeLauncher(executable: string, isMac: boolean): SindarinLauncher {
 	const folder = path.dirname(executable);
 	if (isMac && executable.toLowerCase().endsWith('.dll')) {
-		return { command: 'dotnet', prefixArgs: [executable], folder };
+		// Use the absolute dotnet path so VS Code opened from the Dock works.
+		// Falls back to the plain 'dotnet' string if not found yet; ensureMacOsRuntime
+		// will handle the "not found" case before the task is launched.
+		const dotnet = findDotnet() ?? 'dotnet';
+		return { command: dotnet, prefixArgs: [executable], folder };
 	}
 	return { command: executable, prefixArgs: [], folder };
 }
+
+// ─── .NET runtime detection & installation (macOS only) ──────────────────────
+
+interface RuntimeFramework {
+	name: string;
+	version: string;
+}
+
+/**
+ * Reads the required .NET runtime version from `Sindarin.runtimeconfig.json`
+ * which lives next to `Sindarin.dll` and is generated at publish time.
+ */
+function readRequiredRuntime(dllPath: string): RuntimeFramework | undefined {
+	const configPath = dllPath.replace(/\.dll$/i, '.runtimeconfig.json');
+	if (!fs.existsSync(configPath)) {
+		return undefined;
+	}
+	try {
+		const config = JSON.parse(fs.readFileSync(configPath, 'utf8')) as {
+			runtimeOptions?: { framework?: RuntimeFramework };
+		};
+		return config.runtimeOptions?.framework;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Returns true if the given major .NET version is already installed.
+ * Uses `dotnet --list-runtimes` which is fast (< 200 ms).
+ */
+function isRuntimeInstalled(dotnetPath: string, majorVersion: number): boolean {
+	try {
+		const result = cp.spawnSync(dotnetPath, ['--list-runtimes'], {
+			encoding: 'utf8',
+			timeout: 5000,
+		});
+		return (result.stdout ?? '').split('\n').some(line =>
+			line.startsWith(`Microsoft.NETCore.App ${majorVersion}.`),
+		);
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Runs the official Microsoft dotnet-install.sh script in a visible VS Code
+ * terminal task so the user can follow progress.
+ * The script installs the runtime to ~/.dotnet without requiring sudo.
+ */
+async function installDotnetRuntime(majorVersion: number): Promise<boolean> {
+	const taskName = `Install .NET ${majorVersion} runtime`;
+	const script =
+		`curl -sSL ${DOTNET_INSTALL_SCRIPT_URL}` +
+		` | bash -s -- --runtime dotnet --channel ${majorVersion}.0`;
+
+	const task = new vscode.Task(
+		{ type: 'sindarin-dotnet-install' },
+		vscode.TaskScope.Workspace,
+		taskName,
+		'sindarin',
+		new vscode.ShellExecution(script),
+	);
+
+	await vscode.tasks.executeTask(task);
+
+	return new Promise<boolean>(resolve => {
+		// 5-minute safety timeout
+		const timer = setTimeout(() => {
+			disposable.dispose();
+			resolve(false);
+		}, 300_000);
+
+		const disposable = vscode.tasks.onDidEndTaskProcess(e => {
+			if (e.execution.task.name !== taskName) {
+				return;
+			}
+			clearTimeout(timer);
+			disposable.dispose();
+			if (e.exitCode === 0) {
+				vscode.window.showInformationMessage(
+					`.NET ${majorVersion} runtime installed successfully.`,
+				);
+				resolve(true);
+			} else {
+				vscode.window.showErrorMessage(
+					`Failed to install .NET ${majorVersion} runtime. ` +
+					`Please install it manually from https://dotnet.microsoft.com/download/dotnet/${majorVersion}.0`,
+				);
+				resolve(false);
+			}
+		});
+	});
+}
+
+/**
+ * Checks that the .NET runtime required by Sindarin is available on macOS.
+ * The required version is read from `Sindarin.runtimeconfig.json` so this
+ * check stays correct automatically when Sindarin targets a newer .NET.
+ *
+ * If dotnet is missing entirely, or the required runtime version is not
+ * installed, the user is offered two options:
+ *   - "Install automatically" — runs dotnet-install.sh (no sudo required)
+ *   - "Download page"         — opens the official .NET download page
+ *
+ * Returns true when Sindarin can be launched, false when the user should
+ * take action first.
+ */
+async function ensureMacOsRuntime(launcher: SindarinLauncher): Promise<boolean> {
+	if (macOsRuntimeVerified) {
+		return true;
+	}
+
+	const dotnet = launcher.command;
+	const dllPath = launcher.prefixArgs[0];
+
+	// ── Step 1: is dotnet available at all? ──────────────────────────────────
+	// launcher.command is an absolute path when findDotnet() succeeded, or the
+	// plain string 'dotnet' as a fallback when it was not found.
+	if (!path.isAbsolute(dotnet)) {
+		// dotnet was not found on PATH or in any known location
+		const required = readRequiredRuntime(dllPath);
+		const majorVersion = required
+			? parseInt(required.version.split('.')[0], 10)
+			: 10; // safe default
+
+		const choice = await vscode.window.showErrorMessage(
+			`The .NET ${majorVersion} runtime is required to run Sindarin on macOS but was not found.`,
+			'Install automatically',
+			'Download page',
+		);
+		if (choice === 'Download page') {
+			vscode.env.openExternal(
+				vscode.Uri.parse(
+					`https://dotnet.microsoft.com/en-us/download/dotnet/${majorVersion}.0`,
+				),
+			);
+		} else if (choice === 'Install automatically') {
+			await installDotnetRuntime(majorVersion);
+		}
+		return false; // user must restart VS Code after install so PATH is refreshed
+	}
+
+	// ── Step 2: is the required runtime version installed? ───────────────────
+	const required = readRequiredRuntime(dllPath);
+	if (!required) {
+		// Cannot determine the required version — proceed optimistically
+		macOsRuntimeVerified = true;
+		return true;
+	}
+
+	const majorVersion = parseInt(required.version.split('.')[0], 10);
+
+	if (isRuntimeInstalled(dotnet, majorVersion)) {
+		macOsRuntimeVerified = true;
+		return true;
+	}
+
+	// Required runtime is missing
+	const choice = await vscode.window.showWarningMessage(
+		`.NET ${majorVersion} runtime is required to run Sindarin on macOS but is not installed.`,
+		'Install automatically',
+		'Download page',
+	);
+
+	if (choice === 'Download page') {
+		vscode.env.openExternal(
+			vscode.Uri.parse(
+				`https://dotnet.microsoft.com/en-us/download/dotnet/${majorVersion}.0`,
+			),
+		);
+		return false;
+	}
+
+	if (choice === 'Install automatically') {
+		const ok = await installDotnetRuntime(majorVersion);
+		if (ok) {
+			macOsRuntimeVerified = true;
+		}
+		return ok;
+	}
+
+	return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function showNotFound(): void {
 	const goToWebsite = 'Go to website';
@@ -198,16 +428,29 @@ function installerOverride(
 		return undefined;
 	}
 
-	return isMac
-		? { command: 'dotnet', args: [installer, launcher.folder] }
-		: { command: installer, args: [launcher.folder] };
+	if (isMac) {
+		const dotnet = findDotnet() ?? 'dotnet';
+		return { command: dotnet, args: [installer, launcher.folder] };
+	}
+	return { command: installer, args: [launcher.folder] };
 }
 
 async function runSindarin(mode: SindarinMode): Promise<void> {
-	const launcher = resolveSindarin();
+	let launcher = resolveSindarin();
 	if (!launcher) {
 		showNotFound();
 		return;
+	}
+
+	// macOS: verify dotnet is available and the required runtime is installed
+	// before attempting to launch. Re-resolves after a successful install so
+	// the newly found ~/.dotnet/dotnet path is picked up.
+	if (process.platform === 'darwin' && launcher.prefixArgs.length > 0) {
+		if (!(await ensureMacOsRuntime(launcher))) {
+			return;
+		}
+		// Re-resolve: if dotnet was just installed it is now at ~/.dotnet/dotnet
+		launcher = resolveSindarin() ?? launcher;
 	}
 
 	let cwd: string | undefined;
