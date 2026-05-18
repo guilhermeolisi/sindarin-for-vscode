@@ -3,10 +3,15 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
+import * as https from 'https';
 
 type SindarinMode = 'interpret' | 'walk' | 'update' | 'manual';
 
-const WEBSITE_URL = 'https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-lang';
+/** Nimloth download page, offered when automatic installation is declined or unavailable. */
+const NIMLOTH_DOWNLOAD_URL = 'https://www.nimloth.app/download';
+
+/** Base URL of the Azure blob that hosts the latest Sindarin release archives. */
+const SINDARIN_RELEASE_BASE = 'https://nimlothrelease.blob.core.windows.net/sindarinrelease';
 
 /** Official Microsoft script for installing the .NET runtime without sudo. */
 const DOTNET_INSTALL_SCRIPT_URL = 'https://dot.net/v1/dotnet-install.sh';
@@ -348,20 +353,192 @@ async function ensureMacOsRuntime(launcher: SindarinLauncher): Promise<boolean> 
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-function showNotFound(): void {
-	const goToWebsite = 'Go to website';
-	vscode.window
-		.showErrorMessage(
-			`Sindarin was not found. Install it (default folder: ${defaultSindarinFolder()}) ` +
-				'or set "sindarin.executablePath" in your settings.',
-			goToWebsite,
-		)
-		.then(selection => {
-			if (selection === goToWebsite) {
-				vscode.env.openExternal(vscode.Uri.parse(WEBSITE_URL));
-			}
-		});
+// ─── Sindarin program detection & installation ───────────────────────────────
+
+/**
+ * Returns the release archive URL for the current platform/architecture,
+ * or `undefined` when no prebuilt package is available.
+ *
+ * macOS ships a single runtime-dependent package that works on both Intel
+ * and Apple Silicon, since the architecture is handled by the .NET runtime.
+ */
+function sindarinDownloadUrl(): string | undefined {
+	const { platform, arch } = process;
+	if (platform === 'win32') {
+		if (arch === 'x64') {
+			return `${SINDARIN_RELEASE_BASE}/Sindarin-windows-x64.zip`;
+		}
+		if (arch === 'ia32') {
+			return `${SINDARIN_RELEASE_BASE}/Sindarin-windows-x86.zip`;
+		}
+		if (arch === 'arm64') {
+			return `${SINDARIN_RELEASE_BASE}/Sindarin-windows-arm64.zip`;
+		}
+	} else if (platform === 'linux') {
+		if (arch === 'x64') {
+			return `${SINDARIN_RELEASE_BASE}/Sindarin-linux-x64.zip`;
+		}
+	} else if (platform === 'darwin') {
+		return `${SINDARIN_RELEASE_BASE}/Sindarin-macos-x64.zip`;
+	}
+	return undefined;
 }
+
+/** Downloads a file over HTTPS, following redirects and reporting progress. */
+function downloadFile(
+	url: string,
+	dest: string,
+	onProgress?: (received: number, total: number) => void,
+): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const file = fs.createWriteStream(dest);
+
+		const cleanupAndReject = (err: Error): void => {
+			file.close();
+			fs.unlink(dest, () => reject(err));
+		};
+
+		const request = (currentUrl: string, redirects: number): void => {
+			if (redirects > 5) {
+				cleanupAndReject(new Error('Too many redirects'));
+				return;
+			}
+			https
+				.get(currentUrl, response => {
+					const status = response.statusCode ?? 0;
+					if (status >= 300 && status < 400 && response.headers.location) {
+						response.resume();
+						request(new URL(response.headers.location, currentUrl).toString(), redirects + 1);
+						return;
+					}
+					if (status !== 200) {
+						response.resume();
+						cleanupAndReject(new Error(`Download failed: HTTP ${status}`));
+						return;
+					}
+					const total = parseInt(response.headers['content-length'] ?? '0', 10);
+					let received = 0;
+					response.on('data', (chunk: Buffer) => {
+						received += chunk.length;
+						onProgress?.(received, total);
+					});
+					response.pipe(file);
+					file.on('finish', () => file.close(err => (err ? reject(err) : resolve())));
+				})
+				.on('error', cleanupAndReject);
+		};
+
+		request(url, 0);
+	});
+}
+
+/** Extracts a .zip into the destination folder using platform-native tools. */
+function extractZip(zipPath: string, destFolder: string): void {
+	fs.mkdirSync(destFolder, { recursive: true });
+
+	const result =
+		process.platform === 'win32'
+			? cp.spawnSync('powershell', [
+					'-NoProfile',
+					'-ExecutionPolicy',
+					'Bypass',
+					'-Command',
+					`Expand-Archive -LiteralPath '${zipPath.replace(/'/g, "''")}'` +
+						` -DestinationPath '${destFolder.replace(/'/g, "''")}' -Force`,
+				])
+			: cp.spawnSync('unzip', ['-o', zipPath, '-d', destFolder]);
+
+	if (result.status !== 0) {
+		const detail =
+			(result.stderr && result.stderr.toString().trim()) ||
+			result.error?.message ||
+			`exit code ${result.status}`;
+		throw new Error(`Extraction failed: ${detail}`);
+	}
+}
+
+/**
+ * Downloads and installs Sindarin into the default folder, with a progress
+ * notification. Returns true on success.
+ */
+async function installSindarin(): Promise<boolean> {
+	const url = sindarinDownloadUrl();
+	if (!url) {
+		vscode.window.showErrorMessage(
+			`Automatic installation is not available for your platform (${process.platform}/${process.arch}). ` +
+				`Please download Sindarin manually from ${NIMLOTH_DOWNLOAD_URL}`,
+		);
+		return false;
+	}
+
+	const folder = defaultSindarinFolder();
+	const zipPath = path.join(os.tmpdir(), `sindarin-${Date.now()}.zip`);
+
+	try {
+		await vscode.window.withProgress(
+			{
+				location: vscode.ProgressLocation.Notification,
+				title: 'Installing Sindarin',
+				cancellable: false,
+			},
+			async progress => {
+				progress.report({ message: 'Downloading…' });
+				let lastPct = 0;
+				await downloadFile(url, zipPath, (received, total) => {
+					if (total > 0) {
+						const pct = Math.floor((received / total) * 100);
+						if (pct >= lastPct + 5) {
+							progress.report({ message: `Downloading… ${pct}%` });
+							lastPct = pct;
+						}
+					}
+				});
+				progress.report({ message: 'Extracting…' });
+				extractZip(zipPath, folder);
+			},
+		);
+		vscode.window.showInformationMessage(`Sindarin installed to ${folder}.`);
+		return true;
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err);
+		getOutputChannel().appendLine(`Sindarin installation failed: ${message}`);
+		vscode.window.showErrorMessage(
+			`Sindarin installation failed: ${message}. ` +
+				`You can download it manually from ${NIMLOTH_DOWNLOAD_URL}`,
+		);
+		return false;
+	} finally {
+		if (fs.existsSync(zipPath)) {
+			fs.unlinkSync(zipPath);
+		}
+	}
+}
+
+/**
+ * Shown when Sindarin cannot be located. Offers automatic installation or
+ * the Nimloth download page. Returns true when Sindarin was just installed
+ * and the caller should re-resolve and continue.
+ */
+async function promptInstallSindarin(): Promise<boolean> {
+	const install = 'Install automatically';
+	const download = 'Download page';
+	const choice = await vscode.window.showErrorMessage(
+		`Sindarin was not found (default folder: ${defaultSindarinFolder()}). ` +
+			'Install it automatically, or set "sindarin.executablePath" in your settings.',
+		install,
+		download,
+	);
+
+	if (choice === install) {
+		return installSindarin();
+	}
+	if (choice === download) {
+		vscode.env.openExternal(vscode.Uri.parse(NIMLOTH_DOWNLOAD_URL));
+	}
+	return false;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 /** Ensures there is a saved `.sin` document and returns its path. */
 async function resolveActiveSinFile(): Promise<string | undefined> {
@@ -438,8 +615,18 @@ function installerOverride(
 async function runSindarin(mode: SindarinMode): Promise<void> {
 	let launcher = resolveSindarin();
 	if (!launcher) {
-		showNotFound();
-		return;
+		const installed = await promptInstallSindarin();
+		if (!installed) {
+			return;
+		}
+		launcher = resolveSindarin();
+		if (!launcher) {
+			vscode.window.showErrorMessage(
+				`Sindarin was installed but could not be located in ${defaultSindarinFolder()}. ` +
+					'You may need to set "sindarin.executablePath" in your settings.',
+			);
+			return;
+		}
 	}
 
 	// macOS: verify dotnet is available and the required runtime is installed
