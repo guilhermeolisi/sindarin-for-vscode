@@ -8,7 +8,7 @@
   "description": "Extension for Sindarin, a program for crystal diffraction calculations",
   "repository": {
     "type": "git",
-    "url": "https://github.com/guilhermeolisi/sindarin-lang.git"
+    "url": "https://github.com/guilhermeolisi/sindarin-for-vscode.git"
   },
   "version": "0.3.0",
   "engines": {

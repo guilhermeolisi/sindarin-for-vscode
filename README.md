@@ -4,7 +4,7 @@
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/sindarincorp.sindarin-lang?color=orange)](https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-lang)
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/sindarincorp.sindarin-lang?color=orange)](https://marketplace.visualstudio.com/items?itemName=sindarincorp.sindarin-lang)
 
-[Sindarin](https://github.com/guilhermeolisi/sindarin-lang) for [VS Code](https://code.visualstudio.com/)
+[Sindarin](https://github.com/guilhermeolisi/sindarin-for-vscode) for [VS Code](https://code.visualstudio.com/)
 
 Sindarin for Visual Studio Code is an extension that includes some features to make the Sindarin program easier to use with this powerful text editor.
 
@@ -16,9 +16,9 @@ Sindarin is a crystal diffraction calculation program that uses a dedicated inpu
 
 The extension enables Sindarin code highlighting. Sindarin "language" is automatically enabled by the extension when the file with the ".sin" extension is opened in the editor or it can be enabled manually by selecting the "language mode selector" in the status bar. 
 
-![Sindarin Code Highlighting](https://github.com/guilhermeolisi/sindarin-lang/blob/master/resources/SindarinCodeHighlithing.png?raw=true)
+![Sindarin Code Highlighting](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinCodeHighlithing.png?raw=true)
 
-![Sindarin Language in language mode selector](https://github.com/guilhermeolisi/sindarin-lang/blob/master/resources/SindarinStatusBarLanguage.png?raw=true)
+![Sindarin Language in language mode selector](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinStatusBarLanguage.png?raw=true)
 
 Some commands are enable in VS Code:
 1. Interpet: run sindarin to interpret for the current sindarin file (Shortcut: Ctrl+Shift+Down Arrow)
@@ -27,15 +27,15 @@ Some commands are enable in VS Code:
 4. Manual: open the manual of sindarin program/library (Shortcut: Ctrl+Shift+M)
 
 These commands can be acessed by Command Pallete, short cut or dedicated icons in editor title. 
-![Sindarin commands in Command Pallete](https://github.com/guilhermeolisi/sindarin-lang/blob/master/resources/SindarinCommands.png?raw=true)
+![Sindarin commands in Command Pallete](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinCommands.png?raw=true)
 
-![Sindarin icons in editor title](https://github.com/guilhermeolisi/sindarin-lang/blob/master/resources/SindarinIcons.png?raw=true)
+![Sindarin icons in editor title](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinIcons.png?raw=true)
 
 The icons are automatically enabled with the Sindarin language signed text
 
 Also, the [Chart.js Preview](https://github.com/chartjs/Chart.js) extension is installed together with the sindarin extension. You can view in VS Code the diffractograms of the .chart.json5 file generated after the interpret or walk commands
 
-![View diffraction in VS Code wit Chart.js](https://github.com/guilhermeolisi/sindarin-lang/blob/master/resources/SindarinDiffractionChart.js.png?raw=true)
+![View diffraction in VS Code wit Chart.js](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinDiffractionChart.js.png?raw=true)
 
 ## Requirements
 
