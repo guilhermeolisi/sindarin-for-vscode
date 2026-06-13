@@ -55,6 +55,11 @@
         "when": "editorLangId == sindarin"
       },
       {
+        "command": "sindarin-lang.telchar",
+        "key": "ctrl+shift+up",
+        "when": "editorLangId == sindarin"
+      },
+      {
         "command": "sindarin-lang.update",
         "key": "ctrl+shift+u"
       },
@@ -75,6 +80,18 @@
         "title": "Walk",
         "category": "Sindarin",
         "icon": "resources/commandWalk16pxmono.png"
+      },
+      {
+        "command": "sindarin-lang.telchar",
+        "title": "Telchar",
+        "category": "Sindarin",
+        "icon": "resources/commandTelchar16pxmono.png"
+      },
+      {
+        "command": "sindarin-lang.telcharNoInstrument",
+        "title": "Telchar (no instrument)",
+        "category": "Sindarin",
+        "icon": "resources/commandTelcharNoInstrument16pxmono.png"
       },
       {
         "command": "sindarin-lang.update",
@@ -98,6 +115,16 @@
         },
         {
           "command": "sindarin-lang.walk",
+          "group": "navigation",
+          "when": "editorLangId == sindarin"
+        },
+        {
+          "command": "sindarin-lang.telchar",
+          "group": "navigation",
+          "when": "editorLangId == sindarin"
+        },
+        {
+          "command": "sindarin-lang.telcharNoInstrument",
           "group": "navigation",
           "when": "editorLangId == sindarin"
         },

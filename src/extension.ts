@@ -5,10 +5,16 @@ import * as fs from 'fs';
 import * as cp from 'child_process';
 import * as https from 'https';
 
-type SindarinMode = 'interpret' | 'walk' | 'update' | 'manual';
+type SindarinMode =
+	| 'interpret'
+	| 'walk'
+	| 'telchar'
+	| 'telcharNoInstrument'
+	| 'update'
+	| 'manual';
 
 /** Nimloth download page, offered when automatic installation is declined or unavailable. */
-const NIMLOTH_DOWNLOAD_URL = 'https://www.nimloth.app/download';
+const NIMLOTH_DOWNLOAD_URL = 'https://www.nimloth.app/downloads';
 
 /** Base URL of the Azure blob that hosts the latest Sindarin release archives. */
 const SINDARIN_RELEASE_BASE = 'https://nimlothrelease.blob.core.windows.net/sindarinrelease';
@@ -44,7 +50,14 @@ function getOutputChannel(): vscode.OutputChannel {
 export function activate(context: vscode.ExtensionContext): void {
 	getOutputChannel().appendLine('Sindarin extension activated.');
 
-	const modes: SindarinMode[] = ['interpret', 'walk', 'update', 'manual'];
+	const modes: SindarinMode[] = [
+		'interpret',
+		'walk',
+		'telchar',
+		'telcharNoInstrument',
+		'update',
+		'manual',
+	];
 	for (const mode of modes) {
 		context.subscriptions.push(
 			vscode.commands.registerCommand(`sindarin-lang.${mode}`, () => runSindarin(mode)),
@@ -571,7 +584,10 @@ function buildArgs(mode: SindarinMode, fileName: string | undefined): string[] {
 	switch (mode) {
 		case 'interpret':
 		case 'walk':
+		case 'telchar':
 			return [fileName as string, `--${mode}`, '--all', '--code'];
+		case 'telcharNoInstrument':
+			return [fileName as string, '--telchar', '--no-instrument', '--all', '--code'];
 		case 'update':
 			return ['--update', '--code'];
 		case 'manual':
@@ -642,7 +658,12 @@ async function runSindarin(mode: SindarinMode): Promise<void> {
 
 	let cwd: string | undefined;
 	let fileName: string | undefined;
-	if (mode === 'interpret' || mode === 'walk') {
+	if (
+		mode === 'interpret' ||
+		mode === 'walk' ||
+		mode === 'telchar' ||
+		mode === 'telcharNoInstrument'
+	) {
 		const file = await resolveActiveSinFile();
 		if (!file) {
 			return;

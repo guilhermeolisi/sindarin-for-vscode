@@ -4,6 +4,15 @@ All notable changes to the "sindarin-for-vscode" extension will be documented in
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [Unreleased]
+
+- Added two **Telchar** commands that run Sindarin's telchar automatic refinement
+  on the current `.sin` file, each with a dedicated editor-title button and icon
+  (the Telchar smith's hammer inside the Sindarin diffraction ring):
+  - **Telchar** — runs `--telchar` (shortcut: `Ctrl+Shift+Up`).
+  - **Telchar (no instrument)** — runs `--telchar --no-instrument`; its icon adds a
+    small "−" badge to mark the variant.
+
 ## [0.2.0]
 
 - The Sindarin TextMate grammar and language configuration are now sourced

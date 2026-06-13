@@ -23,8 +23,10 @@ The extension enables Sindarin code highlighting. Sindarin "language" is automat
 Some commands are enable in VS Code:
 1. Interpet: run sindarin to interpret for the current sindarin file (Shortcut: Ctrl+Shift+Down Arrow)
 2. Walk: run sindarin to interpret and run optimization routine for the current sindarin file (Shortcut: Ctrl+Shift+Right Arrow)
-3. Update: run sindarin to update program form online repositorie, need internet connection (Shortcut: Ctrl+Shift+U)
-4. Manual: open the manual of sindarin program/library (Shortcut: Ctrl+Shift+M)
+3. Telchar: run sindarin's telchar automatic refinement for the current sindarin file (Shortcut: Ctrl+Shift+Up Arrow)
+4. Telchar (no instrument): run telchar with the `--no-instrument` option (refinement without the instrumental profile) for the current sindarin file
+5. Update: run sindarin to update program form online repositorie, need internet connection (Shortcut: Ctrl+Shift+U)
+6. Manual: open the manual of sindarin program/library (Shortcut: Ctrl+Shift+M)
 
 These commands can be acessed by Command Pallete, short cut or dedicated icons in editor title. 
 ![Sindarin commands in Command Pallete](https://github.com/guilhermeolisi/sindarin-for-vscode/blob/master/resources/SindarinCommands.png?raw=true)
