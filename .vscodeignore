@@ -9,6 +9,7 @@ node_modules/**
 .github/**
 .gitmodules
 grammar/.git
+grammar/tools/**
 grammar/.gitignore
 grammar/README.md
 grammar/package.json
