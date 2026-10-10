@@ -15,6 +15,9 @@ grammar/README.md
 grammar/package.json
 grammar/package.nls.json
 grammar/cgmanifest.json
+Images/**
+CLAUDE.md
+.claude/**
 esbuild.js
 eslint.config.mjs
 vsc-extension-quickstart.md
