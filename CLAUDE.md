@@ -13,9 +13,10 @@ comandos que rodam a CLI do Sindarin sobre o arquivo aberto. TypeScript, esbuild
   `@vscode/test-cli`.
 - `package.json`: o manifesto da extensao (comandos, atalhos, icones, linguagem, gramatica).
 - `grammar/`: SUBMODULO do `sindarin-grammar` (o repositorio irmao `../sindarin-grammar`). NUNCA edite
-  nada ali: a gramatica muda so no `sindarin-grammar`, e aqui so o ponteiro avanca
-  (`git -C sindarin-for-vscode/grammar fetch origin`, `merge --ff-only origin/main`, depois
-  `git -C sindarin-for-vscode add grammar` e commit). `git submodule status` sem prefixo `+`.
+  nada ali: a gramatica muda so no `sindarin-grammar`, e aqui so o ponteiro avanca. Quem avanca e o script do
+  workspace, `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .claude/ferramentas/sincronizar-gramatica.ps1`
+  (com `-SoPonteiros` quando a gramatica ja esta publicada), que roda o `npm test` antes do commit; `-Check` diz se o
+  ponteiro esta em dia. Nao avance a mao.
 - `resources/`: icones e imagens que VAO no pacote. `Images/`: as fontes dos icones (CorelDRAW `.cdr`
   e os SVG de trabalho), fora do pacote pelo `.vscodeignore`.
 
@@ -54,7 +55,8 @@ Se `check-types` ou `lint` falharem por faltar a pasta `bin/` em `node_modules` 
 O workflow `.github/workflows/publish.yml` publica no Marketplace quando recebe uma tag `v*` (ou pelo
 "Run workflow"), e exige que a tag seja igual ao `version` do `package.json`. O push do `master` nao
 publica nada. NUNCA crie ou envie tag `v*`, nem rode `publish:vsce`, sem pedido expresso do usuario:
-publicar e irreversivel.
+publicar e irreversivel. Os comandos, para o usuario rodar, estao na secao 12 do `SKILLS-E-SCRIPTS.md` da raiz do
+workspace; ate hoje todas as publicacoes foram pelo "Run workflow" (`gh workflow run publish.yml`), sem tag.
 
 ## Icones dos comandos
 
