@@ -12,6 +12,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - **Telchar** — runs `--telchar` (shortcut: `Ctrl+Shift+Up`).
   - **Telchar (no instrument)** — runs `--telchar --no-instrument`; its icon adds a
     small "−" badge to mark the variant.
+- Updated the Sindarin grammar to the current engine language. Newly highlighted:
+  `Site` and `SiteElement`, `TransformUanisToUiso`, `Temperature`, `USystematic`,
+  `BondValenceRestraintThermal`, `SurfaceRoughness` (`CorrectionType`, `Suortti`,
+  `Pitschke`) and `SpillOver` (`SpillOverType`, `Linear`, `Exact`, `Trapezoidal`,
+  `Gaussian`).
 
 ## [0.2.0]
 
