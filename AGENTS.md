@@ -9,7 +9,10 @@ descritos no conteudo sincronizado: ferramentas, modelos, cache, limites de cont
 permissoes, plugins, metricas e hooks precisam de suporte verificado no cliente Codex.
 Herde o modelo da sessao, sem aplicar aliases ou guardas Anthropic. Use apply_patch
 para editar, rg para buscar e PowerShell para comandos. Leia regras paths explicitamente.
-O estado e .codex/state/, separado do Claude. Use o id real CODEX_THREAD_ID e -Sessao
+O progresso de prompts usa prompts/em-execucao/E###/ e sua trava comum, conforme
+prompts/em-execucao/README.md. Adquira a tarefa com execucao-prompt.ps1 antes de editar.
+Autorizacoes, aprovacoes e controle de sessao ficam em .codex/state/, separados do Claude.
+Use o id real CODEX_THREAD_ID e -Sessao
 quando aceito; nunca reutilize marcadores de autorizacao ou revisao de outra sessao.
 Para subagentes, use colaboracao nativa e contexto independente na revisao.
 Hooks locais so executam em clientes locais apos revisao e confianca do usuario.
